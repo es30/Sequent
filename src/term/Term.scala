@@ -13,6 +13,8 @@ class Term (
 
   def termString = "<Nothing>"
 
+  def d() = println(this.toString)
+
   override
   def toString = {
     val errorString =

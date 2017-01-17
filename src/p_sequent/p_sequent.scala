@@ -6,8 +6,8 @@
 package p_sequent
 
 
-import p_term._
 import p_formula._
+import p_sequent.Cedent.CedentTemplate
 
 
 sealed trait CTElement
@@ -15,8 +15,8 @@ case class CTESFormula(f: P_SFormula) extends CTElement
 case class CTECedent(c: Cedent) extends CTElement
 
 
-class Cedent (
-    val fSet: Set[P_SFormula]
+case class Cedent (
+    fSet: Set[P_SFormula]
 ) {
 
   //  A dummy parameter is introduced in the constructor below
@@ -24,18 +24,16 @@ class Cedent (
   //  after type erasure.
 
   def this(template: CedentTemplate, dummy: Any) =
-    this(template.foldLeft(Set[P_SFormula]())
-      (
-        (v: Set[P_SFormula], u: CTElement) => {
+    this(template.foldLeft(Set[P_SFormula]()){
+        (v: Set[P_SFormula], u: CTElement) =>
           u match {
             case x: CTESFormula => v +  x.f
-            case x: CTECedent  => v ++ x.c.fSet
+            case x: CTECedent   => v ++ x.c.fSet
           }
-        }
-      )
+      }
     )
 
-  def contains[T <: P_SFormula](f : T) : Option[(Cedent,T)] =
+  def contains[T <: P_SFormula](f: T) : Option[(Cedent,T)] =
     if (fSet contains f)
       None
     else Some(this, f)
@@ -52,8 +50,6 @@ class Cedent (
     (CTECedent(c), f)
   }
 
-  def checkOccurs(v: P_VarName) : Option[(Cedent,P_TermVariable)] =
-    None
 
   override
   def toString: String =
@@ -66,6 +62,13 @@ class Cedent (
 }
 
 
+object Cedent {
+
+  type CedentTemplate = Set[CTElement]
+
+}
+
+
 // ====================================================================
 
 
@@ -73,10 +76,10 @@ import error._
 import sequent._
 
 
-class P_Sequent (
-    val ante: Cedent,
-    val succ: Cedent,
-    error: Option[Error]
+case class P_Sequent (
+    ante: Cedent,
+    succ: Cedent,
+    override val error: Option[Error]
 ) extends Sequent(error) {
 
   override

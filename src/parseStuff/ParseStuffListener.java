@@ -1,4 +1,4 @@
-// Generated from C:/Users/EdSnow/IdeaProjects/Sequent/src/parseStuff\ParseStuff.g4 by ANTLR 4.5.3
+// Generated from C:/Users/EdSnow/IdeaProjects/Sequent/src/parseStuff\ParseStuff.g4 by ANTLR 4.6
 package parseStuff;
 
 //  from Term.g4
@@ -7,6 +7,7 @@ package parseStuff;
     import p_term.*;
     import formula.*;
     import p_formula.*;
+	import p_axiomatization.*;
     import formulaBuilder.*;
 
 import org.antlr.v4.runtime.tree.ParseTreeListener;

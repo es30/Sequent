@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="antlr-4.5.3-complete" level="application" />
+    <orderEntry type="library" name="antlr-4.6-complete" level="application" />
     <orderEntry type="library" name="com.chuusai:shapeless_2.12:2.3.2" level="application" />
     <orderEntry type="library" name="scala-sdk-2.12.1" level="project" />
     <orderEntry type="inheritedJdk" />

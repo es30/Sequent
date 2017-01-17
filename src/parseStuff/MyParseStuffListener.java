@@ -6,6 +6,7 @@ import term.*;
 import p_term.*;
 import formula.*;
 import p_formula.*;
+import p_axiomatization.*;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class MyParseStuffListener implements ParseStuffListener {
 	static scala.Function3<Formula, Formula, scala.Option<error.Error>, Formula> formulaDisjunction = formulaBuilder.package$.MODULE$.formulaDisjunction();
 	static scala.Function3<Formula, Formula, scala.Option<error.Error>, Formula> formulaConjunction = formulaBuilder.package$.MODULE$.formulaConjunction();
 	static scala.Function2<P_Proposition, scala.Option<error.Error>, Formula> formulaProposition = formulaBuilder.package$.MODULE$.formulaProposition();
+	static scala.Function2<P_Axiomatization, scala.Option<error.Error>, SFormula> formulaAxiomatization = formulaBuilder.package$.MODULE$.formulaAxiomatization();
 	static scala.Function3<P_Predicate, Term[], scala.Option<error.Error>, Formula> formulaApplication = formulaBuilder.package$.MODULE$.formulaApplication();
 	static scala.Function2<Formula, scala.Option<error.Error>, Formula> formulaNegation = formulaBuilder.package$.MODULE$.formulaNegation();
 	static scala.Function4<scala.Tuple2<scala.Enumeration.Value, java.lang.String>, P_VarName, Formula, scala.Option<error.Error>, Formula> formulaQuantification = formulaBuilder.package$.MODULE$.formulaQuantification();
@@ -33,25 +35,31 @@ public class MyParseStuffListener implements ParseStuffListener {
 
 	public SFormula sf;
 	public Formula f;
-	private Term t;
+	public Term t;
 
-	@Override public void enterSFormula_type_axiomatization(ParseStuffParser.SFormula_type_axiomatizationContext ctx) { }
+	@Override
+	public void enterSFormula_type_axiomatization(ParseStuffParser.SFormula_type_axiomatizationContext ctx) { }
 
-	@Override public void exitSFormula_type_axiomatization(ParseStuffParser.SFormula_type_axiomatizationContext ctx)
+	@Override
+	public void exitSFormula_type_axiomatization(ParseStuffParser.SFormula_type_axiomatizationContext ctx)
 	{
-		sf = ctx.f;
+		sf = formulaAxiomatization.apply(ctx.a, p_formula.package$.MODULE$.noError());
 	}
 
-	@Override public void enterSFormula_type_formula(ParseStuffParser.SFormula_type_formulaContext ctx) { }
+	@Override
+	public void enterSFormula_type_formula(ParseStuffParser.SFormula_type_formulaContext ctx) {	}
 
-	@Override public void exitSFormula_type_formula(ParseStuffParser.SFormula_type_formulaContext ctx)
+	@Override
+	public void exitSFormula_type_formula(ParseStuffParser.SFormula_type_formulaContext ctx)
 	{
 		sf = ctx.formula().f;
 	}
 
-	@Override public void enterAxiomatization(ParseStuffParser.AxiomatizationContext ctx) { }
+	@Override
+	public void enterAxiomatization(ParseStuffParser.AxiomatizationContext ctx) { }
 
-	@Override public void exitAxiomatization(ParseStuffParser.AxiomatizationContext ctx) { }
+	@Override
+	public void exitAxiomatization(ParseStuffParser.AxiomatizationContext ctx) { }
 
 	@Override public void enterFormula(ParseStuffParser.FormulaContext ctx) { }
 

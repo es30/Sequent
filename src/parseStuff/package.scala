@@ -7,9 +7,10 @@ package object parseStuff {
 
 
   import error._
+  import term._
   import p_term._
-  import p_formula._
   import formula._
+  import p_formula._
 
   import p_axiomatization._
 
@@ -17,24 +18,49 @@ package object parseStuff {
   object errorParse extends Error
 
 
-  axiomatization_Eq.register("Eq")
-  axiomatization_PA.register("PA")
+  class PredicateInfix(s: String) extends P_Predicate(s) with DisplayString {
+    val bumper = " " + s + " "
+    def displayString(applicand: P_Applicand) =
+      "(" + applicand.terms.map{_.termString}.mkString(bumper) + ")"
+  }
 
-  val predicateIsElementOf                = lookupPredicate("∈")
-  val predicateIsEqualTo                  = lookupPredicate("=")
-  val predicateIsNotEqualTo               = lookupPredicate("≠")
-  val predicateIsLessThan                 = lookupPredicate("<")
-  val predicateIsLessThanOrEqualTo        = lookupPredicate("≤")
-  val predicateIsGreaterThan              = lookupPredicate(">")
-  val predicateIsGreaterThanOrEqualTo     = lookupPredicate("≥")
+  class FunctionInfix(s: String) extends P_Function(s) with DisplayString {
+    val bumper = " " + s + " "
+    def displayString(applicand: P_Applicand) =
+      "(" + applicand.terms.map{_.termString}.mkString(bumper) + ")"
+  }
+
+  def addPredicateInfix(s: String): P_Predicate =
+    lookupPredicate(s, new PredicateInfix(s))
+
+  def addFunctionInfix(s: String): P_Function =
+    lookupFunction(s, new FunctionInfix(s))
+
+  val predicateIsElementOf                = addPredicateInfix("∈")
+  val predicateIsEqualTo                  = addPredicateInfix("=")
+  val predicateIsNotEqualTo               = addPredicateInfix("≠")
+  val predicateIsLessThan                 = addPredicateInfix("<")
+  val predicateIsLessThanOrEqualTo        = addPredicateInfix("≤")
+  val predicateIsGreaterThan              = addPredicateInfix(">")
+  val predicateIsGreaterThanOrEqualTo     = addPredicateInfix("≥")
 
   val functionSuccessor                   = lookupFunction("S")
-  val functionSum                         = lookupFunction("+")
-  val functionProduct                     = lookupFunction("×")
+  val functionSum                         = addFunctionInfix("+")
+  val functionProduct                     = addFunctionInfix("×")
 
   val constantZero                        = lookupConstant("0")
   val constantNaturalNumbersIncludingZero = lookupConstant("ℕ")
   val constantNaturalNumbersExcludingZero = lookupConstant("ℕ⁺")
+
+  //  Order is important in what happens next. Initialization of the
+  //  p_axiomatization package depends upon the parser (less axiomatization)
+  //  already being initialized and available. If one axiomatization is
+  //  dependent upon another, the dependee should be registered (and thus
+  //  initialized) before the dependent.
+
+  axiomatization_Zz.register("Zz")
+  axiomatization_Eq.register("Eq")
+  axiomatization_PA.register("PA")
 
   import org.antlr.v4.runtime._
   import org.antlr.v4.runtime.tree._
@@ -57,6 +83,26 @@ package object parseStuff {
         ec.collect(offendingSymbol, line, charPositionInLine, msg)
     }
 */
+  def pt(s: String): Term =
+  {
+    val input  = new ANTLRInputStream(s)
+    val lexer  = new ParseStuffLexer(input)
+    val tokens = new CommonTokenStream(lexer)
+    val parser = new ParseStuffParser(tokens)
+    val tree = parser.term
+    //  println(tree.toStringTree(parser))
+    val walker = new ParseTreeWalker
+    val listener = new MyParseStuffListener
+    walker.walk(listener, tree)  // walk parse tree
+    val t = listener.t
+    val out_term =
+      if (t != null)
+        t
+      else
+        new Term(Some(errorParse));
+    out_term
+  }
+
   def pf(s: String): Formula =
   {
     val input  = new ANTLRInputStream(s)

@@ -13,6 +13,7 @@ options {
     import p_term.*;
     import formula.*;
     import p_formula.*;
+	import p_axiomatization.*;
     import formulaBuilder.*;
 }
 
@@ -28,8 +29,8 @@ options {
 //  the grammar for sformulas
 
 
-sformula returns [P_SFormula f] locals [Token t]
-    :   {($t=_input.LT(1)).getType()==Identifier && ($f=p_axiomatization.package$.MODULE$.lookupAxiomatization($t.getText()))!=null}? axiomatization
+sformula returns [P_SFormula f] locals [Token t, P_Axiomatization a]
+    :   {($t=_input.LT(1)).getType()==Identifier && ($a=P_Axiomatization$.MODULE$.lookupAxiomatization($t.getText()))!=null}? axiomatization
                                 # SFormula_type_axiomatization
     |   formula                 # SFormula_type_formula
 ;

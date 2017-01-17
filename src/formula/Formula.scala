@@ -8,18 +8,9 @@ package formula
 import error._
 
 
-trait SFormula {
-
-  def formulaString: String
+class SFormula (val error: Option[Error]) {
 
   def d() = println(this.toString)
-
-}
-
-
-class Formula (
-    val error: Option[Error]
-) extends SFormula {
 
   def formulaString = "<Nothing>"
 
@@ -34,3 +25,6 @@ class Formula (
   }
 
 }
+
+
+class Formula(error: Option[Error]) extends SFormula(error)

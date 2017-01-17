@@ -9,33 +9,34 @@ package object foundationalInferenceRule {
   import shapeless._
 
   import error._
+  import p_term._
   import p_formula._
   import p_axiomatization._
-  import substitution._
+  import substitution.substitute._
+  import substitution.checkOccurs._
 
-  import p_sequent._
   import sequent._
+  import p_sequent._
+  import p_sequent.Cedent
+  import p_sequent.Cedent.CedentTemplate
+
   import inferenceRuleWrapper._
 
 
 // ====================================================================
 
 
-  def zz_Error_subst(x: Option[(P_Formula, P_Formula)]): OError =
-    x match {
-      case Some((f, f_subst)) => Some(new Error_subst(f, f_subst))
-      case None => None
-    }
+  def zz_Error_subst(x: Option[Error]): OError = x
 
 
-  def zz_Error_axiom(x: Option[(Cedent, P_Axiomatization)]): OError =
+  def zz_Error_axiom(x: Option[(Cedent, P_SFormulaAxiomatization)]): OError =
     x match {
       case Some((c, f_axiom)) => Some(new Error_axiom(c, f_axiom))
       case None => None
     }
 
 
-  def zz_Error_subsm(x: Option[(P_Axiomatization, P_Formula)]): OError =
+  def zz_Error_subsm(x: Option[(P_SFormulaAxiomatization, P_Formula)]): OError =
     x match {
       case Some((f, f_subsm)) => Some(new Error_subsm(f, f_subsm))
       case None => None
@@ -43,6 +44,9 @@ package object foundationalInferenceRule {
 
 
 // ====================================================================
+
+
+  type Rxxx = (CedentTemplate, CedentTemplate, Seq[OError])
 
 
   import shapeless.ops.function.{FnFromProduct, FnToProduct}
@@ -75,7 +79,7 @@ package object foundationalInferenceRule {
       inference match {
         case Some(x) =>
           val (ante, succ, errorSeqInt) = x
-          new P_Sequent(
+          P_Sequent(
             new Cedent(ante, 0 /* dummy */), new Cedent(succ, 0 /* dummy */),
             errorListCombined(errorSeqInt.flatten, errorListExt))
         case None =>
@@ -138,7 +142,7 @@ package object foundationalInferenceRule {
         val fb = f._2
 //      val  a = CTESFormula(fa)
 //      val  b = CTESFormula(fb)
-        val ab = CTESFormula(new P_FormulaConjunction(fa, fb))
+        val ab = CTESFormula(P_FormulaConjunction(fa, fb))
         val (gamma,   error_ante) = s .ante - fa
         val  delta      = CTECedent(s .succ     )
         (
@@ -160,7 +164,7 @@ package object foundationalInferenceRule {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
 //      val  b = CTESFormula(fb)
-        val ab = CTESFormula(new P_FormulaDisjunction(fa, fb))
+        val ab = CTESFormula(P_FormulaDisjunction(fa, fb))
         val  gamma      = CTECedent(s .ante     )
         val (delta,   error_succ) = s .succ - fa
         (
@@ -182,7 +186,7 @@ package object foundationalInferenceRule {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
 //      val  b = CTESFormula(fb)
-        val ab = CTESFormula(new P_FormulaConjunction(fa, fb))
+        val ab = CTESFormula(P_FormulaConjunction(fa, fb))
         val (gamma,   error_ante) = s .ante - fb
         val  delta      = CTECedent(s .succ     )
         (
@@ -204,7 +208,7 @@ package object foundationalInferenceRule {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
 //      val  b = CTESFormula(fb)
-        val ab = CTESFormula(new P_FormulaDisjunction(fa, fb))
+        val ab = CTESFormula(P_FormulaDisjunction(fa, fb))
         val  gamma      = CTECedent(s .ante     )
         val (delta,   error_succ) = s .succ - fb
         (
@@ -227,7 +231,7 @@ package object foundationalInferenceRule {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
 //      val  b = CTESFormula(fb)
-        val ab = CTESFormula(new P_FormulaDisjunction(fa, fb))
+        val ab = CTESFormula(P_FormulaDisjunction(fa, fb))
         val (gamma, error_L_ante) = sL.ante - fa
         val  delta      = CTECedent(sL.succ     )
         val (sigma, error_R_ante) = sR.ante - fb
@@ -253,7 +257,7 @@ package object foundationalInferenceRule {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
 //      val  b = CTESFormula(fb)
-        val ab = CTESFormula(new P_FormulaConjunction(fa, fb))
+        val ab = CTESFormula(P_FormulaConjunction(fa, fb))
         val  gamma      = CTECedent(sL.ante     )
         val (delta, error_L_succ) = sL.succ - fa
         val  sigma      = CTECedent(sR.ante     )
@@ -279,7 +283,7 @@ package object foundationalInferenceRule {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
 //      val  b = CTESFormula(fb)
-        val ab = CTESFormula(new P_FormulaImplication(fa, fb))
+        val ab = CTESFormula(P_FormulaImplication(fa, fb))
         val  gamma      = CTECedent(sL.ante     )
         val (delta, error_L_succ) = sL.succ - fa
         val (sigma, error_R_ante) = sR.ante - fb
@@ -304,7 +308,7 @@ package object foundationalInferenceRule {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
 //      val  b = CTESFormula(fb)
-        val ab = CTESFormula(new P_FormulaImplication(fa, fb))
+        val ab = CTESFormula(P_FormulaImplication(fa, fb))
         val (gamma,   error_ante) = s .ante - fa
         val (delta,   error_succ) = s .succ - fb
         (
@@ -326,7 +330,7 @@ package object foundationalInferenceRule {
       ) => {
         val fa = f
 //      val  a = CTESFormula(fa)
-        val na = CTESFormula(new P_FormulaNegation(fa))
+        val na = CTESFormula(P_FormulaNegation(fa))
         val  gamma      = CTECedent(s .ante     )
         val (delta,   error_succ) = s .succ - fa
         (
@@ -347,7 +351,7 @@ package object foundationalInferenceRule {
       ) => {
         val fa = f
 //      val  a = CTESFormula(fa)
-        val na = CTESFormula(new P_FormulaNegation(fa))
+        val na = CTESFormula(P_FormulaNegation(fa))
         val (gamma,   error_ante) = s .ante - fa
         val  delta      = CTECedent(s .succ     )
         (
@@ -364,16 +368,18 @@ package object foundationalInferenceRule {
     foundationalInferenceRule("∀L",
       (
         s: P_Sequent,
-        f: P_FormPair
+        f: P_Formula,
+        subst: (P_Term, P_VarName)
       ) => {
-        val (faSubst, fa) = f
-        val (v, error_subst) = fa.checkSubstTerm(faSubst)
+        val fa = f
 //      val  a = CTESFormula(fa)
-        val va = CTESFormula(new P_FormulaQuantification(QuantificationKind.Universal, v, fa))
+        val (t, x) = subst
+        val (faSubst, error_subst) = fa.substitute(t, x)
+        val qa = CTESFormula(P_FormulaQuantification(QuantificationKind.Universal, x, fa))
         val (gamma,   error_ante) = s .ante - faSubst
         val  delta      = CTECedent(s .succ          )
         (
-          Set(gamma, va), Set(delta),
+          Set(gamma, qa), Set(delta),
           Seq(
             zz_Error_ante(error_ante),
             zz_Error_subst(error_subst)
@@ -387,20 +393,22 @@ package object foundationalInferenceRule {
     foundationalInferenceRule("∀R",
       (
         s: P_Sequent,
-        f: P_FormPair
+        f: P_Formula,
+        subst: (P_VarName, P_VarName)
       ) => {
-        val (faSubst, fa) = f
-        val (v, error_subst) = fa.checkSubstVar(faSubst)
+        val fa = f
 //      val  a = CTESFormula(fa)
-        val va = CTESFormula(new P_FormulaQuantification(QuantificationKind.Universal, v, fa))
+        val (y, x) = subst
+        val (faSubst, error_subst) = fa.substitute(y, x)
+        val qa = CTESFormula(P_FormulaQuantification(QuantificationKind.Universal, x, fa))
         val  cgamm                = s .ante
         val (cdelt,   error_succ) = s .succ -- faSubst
         val  gamma = CTECedent(cgamm)
         val  delta = CTECedent(cdelt)
-        val error_occurs_ante = cgamm.checkOccurs(v)
-        val error_occurs_succ = cdelt.checkOccurs(v)
+        val error_occurs_ante = cgamm.checkOccurs(y)
+        val error_occurs_succ = cdelt.checkOccurs(y)
         (
-          Set(gamma), Set(va, delta),
+          Set(gamma), Set(qa, delta),
           Seq(
             zz_Error_succ(error_succ),
             zz_Error_subst(error_subst),
@@ -416,20 +424,22 @@ package object foundationalInferenceRule {
     foundationalInferenceRule("∃L",
       (
         s: P_Sequent,
-        f: P_FormPair
+        f: P_Formula,
+        subst: (P_VarName, P_VarName)
       ) => {
-        val (faSubst, fa) = f
-        val (v, error_subst) = fa.checkSubstVar(faSubst)
+        val fa = f
 //      val  a = CTESFormula(fa)
-        val va = CTESFormula(new P_FormulaQuantification(QuantificationKind.Existential, v, fa))
+        val (y, x) = subst
+        val (faSubst, error_subst) = fa.substitute(y, x)
+        val qa = CTESFormula(P_FormulaQuantification(QuantificationKind.Existential, x, fa))
         val (cgamm,   error_ante) = s .ante -- faSubst
         val  cdelt                = s .succ
         val  gamma = CTECedent(cgamm)
         val  delta = CTECedent(cdelt)
-        val error_occurs_ante = cgamm.checkOccurs(v)
-        val error_occurs_succ = cdelt.checkOccurs(v)
+        val error_occurs_ante = cgamm.checkOccurs(y)
+        val error_occurs_succ = cdelt.checkOccurs(y)
         (
-          Set(gamma, va), Set(delta),
+          Set(gamma, qa), Set(delta),
           Seq(
             zz_Error_ante(error_ante),
             zz_Error_subst(error_subst),
@@ -445,16 +455,18 @@ package object foundationalInferenceRule {
     foundationalInferenceRule("∃R",
       (
         s: P_Sequent,
-        f: P_FormPair
+        f: P_Formula,
+        subst: (P_Term, P_VarName)
       ) => {
-        val (faSubst, fa) = f
-        val (v, error_subst) = fa.checkSubstTerm(faSubst)
+        val fa = f
 //      val  a = CTESFormula(fa)
-        val va = CTESFormula(new P_FormulaQuantification(QuantificationKind.Existential, v, fa))
+        val (t, x) = subst
+        val (faSubst, error_subst) = fa.substitute(t, x)
+        val qa = CTESFormula(P_FormulaQuantification(QuantificationKind.Existential, x, fa))
         val  gamma      = CTECedent(s .ante          )
         val (delta,   error_succ) = s .succ - faSubst
         (
-          Set(gamma), Set(va, delta),
+          Set(gamma), Set(qa, delta),
           Seq(
             zz_Error_succ(error_succ),
             zz_Error_subst(error_subst)
@@ -505,7 +517,7 @@ package object foundationalInferenceRule {
     foundationalInferenceRule("CL",
       (
         s: P_Sequent,
-        a: P_Axiomatization,
+        a: P_SFormulaAxiomatization,
         f: P_Formula
       ) => {
         val     error_axiom = s .ante.contains(a)

@@ -1,4 +1,4 @@
-// Generated from C:/Users/EdSnow/IdeaProjects/Sequent/src/parseStuff\ParseStuff.g4 by ANTLR 4.5.3
+// Generated from C:/Users/EdSnow/IdeaProjects/Sequent/src/parseStuff\ParseStuff.g4 by ANTLR 4.6
 package parseStuff;
 
 //  from Term.g4
@@ -7,6 +7,7 @@ package parseStuff;
     import p_term.*;
     import formula.*;
     import p_formula.*;
+	import p_axiomatization.*;
     import formulaBuilder.*;
 
 import org.antlr.v4.runtime.atn.*;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class ParseStuffParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.6", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -114,6 +115,7 @@ public class ParseStuffParser extends Parser {
 	public static class SformulaContext extends ParserRuleContext {
 		public P_SFormula f;
 		public Token t;
+		public P_Axiomatization a;
 		public SformulaContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -124,6 +126,7 @@ public class ParseStuffParser extends Parser {
 			super.copyFrom(ctx);
 			this.f = ctx.f;
 			this.t = ctx.t;
+			this.a = ctx.a;
 		}
 	}
 	public static class SFormula_type_formulaContext extends SformulaContext {
@@ -167,7 +170,7 @@ public class ParseStuffParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(42);
-				if (!((_localctx.t=_input.LT(1)).getType()==Identifier && (_localctx.f=p_axiomatization.package$.MODULE$.lookupAxiomatization(_localctx.t.getText()))!=null)) throw new FailedPredicateException(this, "($t=_input.LT(1)).getType()==Identifier && ($f=p_axiomatization.package$.MODULE$.lookupAxiomatization($t.getText()))!=null");
+				if (!((_localctx.t=_input.LT(1)).getType()==Identifier && (_localctx.a=P_Axiomatization$.MODULE$.lookupAxiomatization(_localctx.t.getText()))!=null)) throw new FailedPredicateException(this, "($t=_input.LT(1)).getType()==Identifier && ($a=P_Axiomatization$.MODULE$.lookupAxiomatization($t.getText()))!=null");
 				setState(43);
 				axiomatization();
 				}
@@ -319,6 +322,7 @@ public class ParseStuffParser extends Parser {
 			setState(54);
 			disjunction();
 			setState(57);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==Conditional_connective) {
 				{
@@ -800,6 +804,7 @@ public class ParseStuffParser extends Parser {
 			setState(95);
 			term();
 			setState(113);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__2:
 				{
@@ -946,6 +951,7 @@ public class ParseStuffParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(124);
+				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case T__13:
 				case T__14:
@@ -1022,6 +1028,7 @@ public class ParseStuffParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(137);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__13:
 				{
@@ -1529,6 +1536,7 @@ public class ParseStuffParser extends Parser {
 			setState(177);
 			match(T__0);
 			setState(186);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << Identifier) | (1L << Successor_operator) | (1L << Zero))) != 0)) {
 				{
@@ -1580,7 +1588,7 @@ public class ParseStuffParser extends Parser {
 	private boolean sformula_sempred(SformulaContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return (_localctx.t=_input.LT(1)).getType()==Identifier && (_localctx.f=p_axiomatization.package$.MODULE$.lookupAxiomatization(_localctx.t.getText()))!=null;
+			return (_localctx.t=_input.LT(1)).getType()==Identifier && (_localctx.a=P_Axiomatization$.MODULE$.lookupAxiomatization(_localctx.t.getText()))!=null;
 		}
 		return true;
 	}

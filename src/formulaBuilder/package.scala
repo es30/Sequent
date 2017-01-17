@@ -13,6 +13,7 @@ package object formulaBuilder {
   import p_term._
   import formula._
   import p_formula._
+  import p_axiomatization._
 
   import vetter._
 
@@ -38,6 +39,14 @@ package object formulaBuilder {
           case a: P_Proposition => (Some(a), None)
         }
       }: AType[P_Proposition])
+
+    implicit val caseP_Axiomatization = at[P_Axiomatization](
+      x => {
+        x match {
+          case null => (None, Some(new Error_null))
+          case a: P_Axiomatization => (Some(a), None)
+        }
+      }: AType[P_Axiomatization])
 
     implicit val caseP_Predicate = at[P_Predicate](
       x => {
@@ -75,8 +84,7 @@ package object formulaBuilder {
       x => {
         x match {
           case null => (None, Some(new Error_null))
-          case a: Array[Term] => {
-
+          case a: Array[Term] =>
             val inError: PartialFunction[(Term, Int), (Error, Int)] = {
               case (null, pos) =>
                 (new Error_null, pos)
@@ -85,7 +93,6 @@ package object formulaBuilder {
               case (t: Term, pos) =>
                 (new Error_empty(t.error), pos)
             }
-
             val (p1, p2) = a.span(_.isInstanceOf[P_Term])
             val termArray =
               if (p2.length == 0)
@@ -93,8 +100,7 @@ package object formulaBuilder {
               else
                 None
             val errorList: List[(Error, Int)] = a.toList.zip(Stream from 1).collect(inError)
-            (termArray, None)
-          }
+            (termArray, None)       // <==== fix!!!
         }
       }: AType[P_Applicand])
 
@@ -165,6 +171,10 @@ package object formulaBuilder {
 
     implicit val caseFormula = new Encapsulator[Formula] {
       def encapsulation(x: Option[Error]) = new Formula(x)
+    }
+
+    implicit val caseSFormula = new Encapsulator[SFormula] {
+      def encapsulation(x: Option[Error]) = new SFormula(x)
     }
 
     implicit val caseTerm = new Encapsulator[Term] {
@@ -340,6 +350,34 @@ package object formulaBuilder {
       }
     )
 
+  def sFormulaBuilder[Ta <: HList, T <: HList, F, Tout](f: F)
+    (implicit
+      ftp: FnToProduct.Aux[F, T => Option[Error] => SFormula],
+      vet: VetApplicand[Ta, T],
+      enc: Encapsulator[SFormula],
+      ffp: FnFromProduct[Ta => SFormula]
+    ): ffp.Out =
+    ffp(
+      (a: Ta) => {
+
+        //  Scrutinize the arguments in the wrapper's applicand
+        //  and convert them to a form consumable by the wrapped
+        //  inference rule.
+
+        val (applicand, errorListExt, error) = vet.vetApplicand(a, 1)
+        val combinedError = errorListCombined(error, errorListExt)
+
+        //  Apply the builder if there is an applicand
+        //  to which to apply it.
+
+        applicand match {
+          case Some(x) => ftp(f)(x)(combinedError)
+          case none => enc.encapsulation(combinedError)
+        }
+
+      }
+    )
+
   def termBuilder[Ta <: HList, T <: HList, F, Tout](f: F)
     (implicit
       ftp: FnToProduct.Aux[F, T => Option[Error] => Term],
@@ -417,6 +455,15 @@ package object formulaBuilder {
       ) => (
         error: Option[Error]
       ) => new P_FormulaProposition(p, error): Formula
+    )
+
+  val formulaAxiomatization =
+    sFormulaBuilder(
+      (
+        a: P_Axiomatization
+      ) => (
+        error: Option[Error]
+      ) => new P_SFormulaAxiomatization(a): SFormula
     )
 
   val formulaApplication =

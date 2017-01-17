@@ -25,72 +25,140 @@ class P_Predicate(val name: String) {
 // ====================================================================
 
 
+import scala.util.control.TailCalls._
+
 import error._
 import p_term._
 import formula._
 
 
-trait P_SFormula extends SFormula
+trait P_SFormula {
+
+  def formulaString(): String
+
+  def equals(
+      stack: List[(P_Formula, P_Formula)],
+      obj: Any
+    ): TailRec[Boolean]
+
+  final override
+  def equals(obj: Any): Boolean =
+    equals(Nil, obj).result
+
+  def hashCode(
+      stack: List[P_Formula],
+      hash: Int
+    ): TailRec[Int]
+
+  final override
+  def hashCode(): Int =
+    hashCode(Nil, 0).result
+
+}
 
 
-abstract class P_Formula (
+abstract class P_SOnlyFormula(
+    error: Option[Error]
+) extends SFormula(error) with P_SFormula
+
+
+abstract class P_Formula(
     error: Option[Error] = None
 ) extends Formula(error) with P_SFormula
 
 
-case class P_FormulaProposition (val p: P_Proposition, override val error: Option[Error] = None)
+case class P_FormulaProposition (p: P_Proposition, override val error: Option[Error] = None)
     extends P_Formula {
 
-  final override
-  def equals(obj: Any) =
-    obj match {
-      case f: P_FormulaProposition => p == f.p
-      case _ => false
-    }
-
-  final override
-  def hashCode(): Int = p.hashCode()
-
   override
-  def formulaString = p.toString
+  def formulaString() = p.toString
+
+  final
+  def equals(
+      stack: List[(P_Formula, P_Formula)],
+      obj: Any
+    ): TailRec[Boolean] = {
+    val retval =
+      obj match {
+        case f: P_FormulaProposition =>
+          f.p == p
+        case _ =>
+          false
+      }
+    tailcall(equals_continue(stack, retval))
+  }
+
+  final
+  def hashCode(
+      stack: List[P_Formula],
+      hash: Int
+    ): TailRec[Int] =
+    tailcall(hashCode_continue(stack, 3 * hash + p.hashCode()))
 
 }
 
 
-case class P_FormulaApplication (val p: P_Predicate, val a: P_Applicand, override val error: Option[Error] = None)
+case class P_FormulaApplication (p: P_Predicate, a: P_Applicand, override val error: Option[Error] = None)
     extends P_Formula {
 
-  final override
-  def equals(obj: Any) =
-    obj match {
-      case f: P_FormulaApplication => p == f.p && a == f.a
-      case _ => false
+  override
+  def formulaString() =
+    p match {
+      case predicate: DisplayString =>
+        predicate.displayString(a)
+      case _ =>
+        p.toString + a.toString
     }
 
-  final override
-  def hashCode(): Int = p.hashCode() + a.hashCode()
+  final
+  def equals(
+      stack: List[(P_Formula, P_Formula)],
+      obj: Any
+    ): TailRec[Boolean] = {
+    val retval =
+      obj match {
+        case f: P_FormulaApplication if f.p == p =>
+          f.a == a
+        case _ =>
+          false
+      }
+    tailcall(equals_continue(stack, retval))
+  }
 
-  override
-  def formulaString = p.toString + a.toString
+  final
+  def hashCode(
+      stack: List[P_Formula],
+      hash: Int
+    ): TailRec[Int] =
+    tailcall(hashCode_continue(stack, 5 * hash + p.hashCode() + a.hashCode()))
 
 }
 
 
-case class P_FormulaNegation (val f1: P_Formula, override val error: Option[Error] = None)
+case class P_FormulaNegation (f1: P_Formula, override val error: Option[Error] = None)
   extends P_Formula {
 
-  final override
-  def equals(obj: Any) =
+  override
+  def formulaString() = "¬" + f1.formulaString
+
+  final
+  def equals(
+      stack: List[(P_Formula, P_Formula)],
+      obj: Any
+    ): TailRec[Boolean] =
     obj match {
-      case f: P_FormulaNegation => f1 == f.f1
-      case _ => false
+      case f: P_FormulaNegation =>
+        tailcall(f1.equals(stack, f.f1))
+      case _ =>
+        tailcall(equals_continue(stack, false))
     }
 
-  final override
-  def hashCode(): Int = 41 * f1.hashCode()
-
-  override
-  def formulaString = "¬" + f1.formulaString
+  final
+  def hashCode(
+      stack: List[P_Formula],
+      hash: Int
+    ): TailRec[Int] =
+    tailcall(f1.hashCode(stack, 7 * hash))
 
 }
 
@@ -100,43 +168,38 @@ object DyadicKind extends Enumeration {
   val Conjunction, Disjunction, Implication, Biconditional = Value
 }
 
-abstract case class P_FormulaDyadic(kind: DyadicKind.Kind,
-    f1: P_Formula, f2: P_Formula,
-    connective: String,
-    override val error: Option[Error] = None
-  ) extends P_Formula {
 
-  val bumper = " " + connective + " "
-
-  final override
-  def equals(obj: Any) =
-    obj match {
-      case f: P_FormulaDyadic =>
-        (kind == f.kind) && (f1 == f.f1) && (f2 == f.f2)
-      case _ => false
-    }
-
-  final override
-  def hashCode(): Int =
-    kind.hashCode() + f1.hashCode() + f2.hashCode()
-
-  override
-  def formulaString = "(" + f1.formulaString + bumper + f2.formulaString + ")"
-
+case class P_FormulaConjunction (f1: P_Formula, f2: P_Formula, override val error: Option[Error] = None)
+    extends P_Formula with P_FormulaDyadic {
+  override def formulaString() = super[P_FormulaDyadic].formulaString
+  val kind = DyadicKind.Conjunction
+  val connective = "∧"
+  def replace(f1: P_Formula, f2: P_Formula) = copy(f1 = f1, f2 = f2)
 }
 
+case class P_FormulaDisjunction (f1: P_Formula, f2: P_Formula, override val error: Option[Error] = None)
+    extends P_Formula with P_FormulaDyadic {
+  override def formulaString() = super[P_FormulaDyadic].formulaString
+  val kind = DyadicKind.Disjunction
+  val connective = "∨"
+  def replace(f1: P_Formula, f2: P_Formula) = copy(f1 = f1, f2 = f2)
+}
 
-class P_FormulaConjunction (f1: P_Formula, f2: P_Formula, error: Option[Error] = None)
-    extends P_FormulaDyadic(DyadicKind.Conjunction, f1, f2, "∧", error)
+case class P_FormulaImplication (f1: P_Formula, f2: P_Formula, override val error: Option[Error] = None)
+    extends P_Formula with P_FormulaDyadic {
+  override def formulaString() = super[P_FormulaDyadic].formulaString
+  val kind = DyadicKind.Implication
+  val connective = "→"
+  def replace(f1: P_Formula, f2: P_Formula) = copy(f1 = f1, f2 = f2)
+}
 
-class P_FormulaDisjunction (f1: P_Formula, f2: P_Formula, error: Option[Error] = None)
-    extends P_FormulaDyadic(DyadicKind.Disjunction, f1, f2, "∨", error)
-
-class P_FormulaImplication (f1: P_Formula, f2: P_Formula, error: Option[Error] = None)
-    extends P_FormulaDyadic(DyadicKind.Implication, f1, f2, "→", error)
-
-class P_FormulaBiconditional (f1: P_Formula, f2: P_Formula, error: Option[Error] = None)
-    extends P_FormulaDyadic(DyadicKind.Biconditional, f1, f2, "↔", error)
+case class P_FormulaBiconditional (f1: P_Formula, f2: P_Formula, override val error: Option[Error] = None)
+    extends P_Formula with P_FormulaDyadic {
+  override def formulaString() = super[P_FormulaDyadic].formulaString
+  val kind = DyadicKind.Biconditional
+  val connective = "→"
+  def replace(f1: P_Formula, f2: P_Formula) = copy(f1 = f1, f2 = f2)
+}
 
 
 object QuantificationKind extends Enumeration {
@@ -147,23 +210,32 @@ object QuantificationKind extends Enumeration {
   val Universal   = (Value, "∀")
 }
 
-case class P_FormulaQuantification(val kind: QuantificationKind.Kind,
-    val v: P_VarName, val f1: P_Formula,
+case class P_FormulaQuantification(kind: QuantificationKind.Kind,
+    v: P_VarName, f1: P_Formula,
     override val error: Option[Error] = None
   ) extends P_Formula {
 
-  final override
-  def equals(obj: Any) =
+  override
+  def formulaString() = "(" + kind._2 + v.toString + "." + f1.formulaString + ")"
+
+  final
+  def equals(
+      stack: List[(P_Formula, P_Formula)],
+      obj: Any
+    ): TailRec[Boolean] =
     obj match {
-      case f: P_FormulaQuantification => v == f.v && f1 == f.f1
-      case _ => false
+      case f: P_FormulaQuantification if f.v == v =>
+        tailcall(f1.equals(stack, f.f1))
+      case _ =>
+        tailcall(equals_continue(stack, false))
     }
 
-  final override
-  def hashCode(): Int = v.hashCode() + f1.hashCode()
-
-  override
-  def formulaString = "(" + kind._2 + v.toString + "." + f1.formulaString + ")"
+  final
+  def hashCode(
+      stack: List[P_Formula],
+      hash: Int
+    ): TailRec[Int] =
+    tailcall(f1.hashCode(stack, 11 * hash + kind.hashCode() + v.hashCode()))
 
 }
 
