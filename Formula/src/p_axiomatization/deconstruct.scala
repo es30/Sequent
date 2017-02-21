@@ -13,45 +13,39 @@ import p_formula.P_Formula.lookupProposition
   * Created by EdSnow on 1/5/2017.
   */
 
-object deconstructP_Term {
+object deconstruct {
 
-  val marker = lookupVarName("Z")
+  val term_marker = lookupVarName("Z")
 
   implicit class P_TermDeconstructor(val template: P_Term) {
 
     def deconstruct(
-        stack: List[(Iterator[P_Term], Iterator[P_Term])],
+        continuation: Option[() => TailRec[Boolean]],
         candidate: P_Term,
         extractees: ArrayBuffer[P_Term]
       ): TailRec[Boolean] =
       template match {
 
         case tc: P_TermConstant =>
-          val retval =
-            candidate match {
-              case t: P_TermConstant =>
-                t.c == tc.c
-              case _ =>
-                false
-            }
-          tailcall(deconstruct_continue(stack, extractees, retval))
+          val retval = candidate == tc
+          tailcall(deconstruct_continue(continuation, retval))
 
         case tv: P_TermVariable =>
           val retval =
-            if (tv.v == marker) {
+            if (tv.v == term_marker) {
               extractees += candidate
               true
             }
             else
               candidate == tv
-          tailcall(deconstruct_continue(stack, extractees, retval))
+          tailcall(deconstruct_continue(continuation, retval))
 
         case ta: P_TermApplication =>
           candidate match {
             case t: P_TermApplication if t.f == ta.f =>
-              tailcall(ta.a.deconstruct_1(stack, t.a, extractees))
+              tailcall(ta.a.deconstruct(continuation, t.a, extractees))
             case _ =>
-              tailcall(deconstruct_continue(stack, extractees, false))
+              done(false)
           }
 
       }
@@ -60,58 +54,44 @@ object deconstructP_Term {
 
   implicit class P_ApplicandDeconstructor(val template: P_Applicand) {
 
-    def deconstruct_applicand(
+    def deconstruct(
         candidate: P_Applicand,
         extractees: ArrayBuffer[P_Term]
       ): Boolean =
-        tailcall(deconstruct_1(Nil, candidate, extractees)).result
+        tailcall(deconstruct(None, candidate, extractees)).result
 
-    def deconstruct_1(
-        stack: List[(Iterator[P_Term], Iterator[P_Term])],
+    def deconstruct(
+        continuation: Option[() => TailRec[Boolean]],
         candidate: P_Applicand,
         extractees: ArrayBuffer[P_Term]
       ): TailRec[Boolean] = {
       val  templateTerms =  template.terms
       val candidateTerms = candidate.terms
-      if (candidateTerms.length == templateTerms.length) {
-        val  templates =  templateTerms.iterator
-        val candidates = candidateTerms.iterator
-        tailcall(deconstruct_2((templates, candidates) :: stack, extractees))
+      val length = templateTerms.length
+      if (candidateTerms.length == length) {
+
+        def looper(
+            termIndex: Int
+          ): TailRec[Boolean] =
+          if (termIndex >= length)
+            tailcall(deconstruct_continue(continuation, true))
+          else {
+            def cont1: () => TailRec[Boolean] =
+              () => tailcall(looper(termIndex + 1))
+            tailcall(templateTerms(termIndex).
+              deconstruct(Some(cont1), candidateTerms(termIndex), extractees))
+          }
+
+        tailcall(looper(0))
+
       }
       else
-        tailcall(deconstruct_continue(stack, extractees, false))
+        done(false)
     }
 
   }
 
-  def deconstruct_2(
-      stack: List[(Iterator[P_Term], Iterator[P_Term])],
-      extractees: ArrayBuffer[P_Term]
-    ): TailRec[Boolean] = {
-    val (templates, candidates) = stack.head
-    if (templates.hasNext)
-      tailcall(templates.next().deconstruct(stack, candidates.next(), extractees))
-    else
-      tailcall(deconstruct_continue(stack.tail, extractees, true))
-  }
-
-  def deconstruct_continue(
-      stack: List[(Iterator[P_Term], Iterator[P_Term])],
-      extractees: ArrayBuffer[P_Term],
-      retval: Boolean
-    ): TailRec[Boolean] =
-    if (!retval || stack.isEmpty)
-      done(retval)
-    else
-      tailcall(deconstruct_2(stack, extractees))
-
-}
-
-object deconstructP_Formula {
-
-  import deconstructP_Term.P_ApplicandDeconstructor
-
-  val marker = lookupProposition("Z")
+  val formula_marker = lookupProposition("Z")
 
   implicit class FormulaDeconstructor(val template: Formula) {
 
@@ -131,14 +111,14 @@ object deconstructP_Formula {
         candidate: P_Formula
       ): Option[(ArrayBuffer[P_Formula], ArrayBuffer[P_Term])] = {
       val extractees = (ArrayBuffer.empty[P_Formula], ArrayBuffer.empty[P_Term])
-      if (deconstruct_1(Nil, candidate, extractees).result)
+      if (deconstruct(None, candidate, extractees).result)
         Some(extractees)
       else
         None
     }
 
-    def deconstruct_1(
-        stack: List[(P_Formula, P_Formula)],
+    def deconstruct(
+        continuation: Option[() => TailRec[Boolean]],
         candidate: P_Formula,
         extractees: (ArrayBuffer[P_Formula], ArrayBuffer[P_Term])
       ): TailRec[Boolean] =
@@ -147,47 +127,48 @@ object deconstructP_Formula {
         case ap: P_FormulaProposition =>
           val (formulas, _) = extractees
           val retval =
-            if (ap.p == marker) {
+            if (ap.p == formula_marker) {
               formulas += candidate
               true
             }
             else candidate == ap
-          tailcall(deconstruct_continue(stack, extractees, retval))
+          tailcall(deconstruct_continue(continuation, retval))
 
         case aa: P_FormulaApplication =>
           val (_, terms) = extractees
           val retval =
             candidate match {
               case f: P_FormulaApplication if f.p == aa.p =>
-                aa.a.deconstruct_applicand(f.a, terms)
+                aa.a.deconstruct(f.a, terms)
               case _ =>
                 false
             }
-          tailcall(deconstruct_continue(stack, extractees, retval))
+          tailcall(deconstruct_continue(continuation, retval))
 
         case an: P_FormulaNegation =>
           candidate match {
             case f: P_FormulaNegation =>
-              tailcall(an.f1.deconstruct_1(stack, f.f1, extractees))
+              tailcall(an.f1.deconstruct(continuation, f.f1, extractees))
             case _ =>
-              tailcall(deconstruct_continue(stack, extractees, false))
+              done(false)
           }
 
         case ad: P_FormulaDyadic =>
           candidate match {
             case f: P_FormulaDyadic if f.kind == ad.kind =>
-              val newStack = (ad.f2, f.f2) :: stack
-              tailcall(ad.f1.deconstruct_1(newStack, f.f1, extractees))
+              def cont1: () => TailRec[Boolean] =
+                () => tailcall(ad.f2.deconstruct(continuation, f.f2, extractees))
+              tailcall(ad.f1.deconstruct(Some(cont1), f.f1, extractees))
             case _ =>
-              tailcall(deconstruct_continue(stack, extractees, false))
+              done(false)
           }
 
         case aq: P_FormulaQuantification =>
           candidate match {
             case f: P_FormulaQuantification if f.kind == aq.kind && f.v == aq.v =>
-              tailcall(aq.f1.deconstruct_1(stack, f.f1, extractees))
+              tailcall(aq.f1.deconstruct(continuation, f.f1, extractees))
             case _ =>
-              tailcall(deconstruct_continue(stack, extractees, false))
+              done(false)
           }
 
       }
@@ -195,15 +176,17 @@ object deconstructP_Formula {
   }
 
   def deconstruct_continue(
-      stack: List[(P_Formula, P_Formula)],
-      extractees: (ArrayBuffer[P_Formula], ArrayBuffer[P_Term]),
+      continuation: Option[() => TailRec[Boolean]],
       retval: Boolean
     ): TailRec[Boolean] =
-    if (!retval || stack.isEmpty)
-      done(retval)
-    else {
-      val (template, candidate) = stack.head
-      tailcall(template.deconstruct_1(stack.tail, candidate, extractees))
-    }
+    if (retval)
+      continuation match {
+        case Some(cont) =>
+          tailcall(cont())
+        case None =>
+          done(true)
+      }
+    else
+      done(false)
 
 }

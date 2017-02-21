@@ -1,5 +1,3 @@
-import axiomatization.{axiomatization_Eq, axiomatization_PA}
-
 package object parseStuff {
 
 
@@ -11,33 +9,33 @@ package object parseStuff {
   import error._
   import term._
   import p_term._
-  import p_term.P_Term.{lookupConstant, lookupFunction}
+  import p_term.P_Term.{lookupConstant, lookupVarName, lookupFunction}
   import formula._
   import p_formula._
   import p_formula.P_Formula.lookupPredicate
-
-  import p_axiomatization._
 
 
   object errorParse extends Error
 
 
-  class PredicateInfix(s: String) extends P_Predicate(s) with DisplayString {
+  def v(x: String) = lookupVarName(x)
+
+  private class PredicateInfix(s: String) extends P_Predicate(s) with DisplayString {
     val bumper = " " + s + " "
     def displayString(applicand: P_Applicand) =
       "(" + applicand.terms.map{_.termString}.mkString(bumper) + ")"
   }
 
-  class FunctionInfix(s: String) extends P_Function(s) with DisplayString {
+  private class FunctionInfix(s: String) extends P_Function(s) with DisplayString {
     val bumper = " " + s + " "
     def displayString(applicand: P_Applicand) =
       "(" + applicand.terms.map{_.termString}.mkString(bumper) + ")"
   }
 
-  def addPredicateInfix(s: String): P_Predicate =
+  private def addPredicateInfix(s: String): P_Predicate =
     lookupPredicate(s, new PredicateInfix(s))
 
-  def addFunctionInfix(s: String): P_Function =
+  private def addFunctionInfix(s: String): P_Function =
     lookupFunction(s, new FunctionInfix(s))
 
   val predicateIsElementOf                = addPredicateInfix("∈")
@@ -62,8 +60,8 @@ package object parseStuff {
   //  dependent upon another, the dependee should be registered (and thus
   //  initialized) before the dependent.
 
-  axiomatization_Eq.register("Eq")
-  axiomatization_PA.register("PA")
+  axiomatization_Eq.subsumer.register("Eq")
+  axiomatization_PA.subsumer.register("PA")
 
   import org.antlr.v4.runtime._
   import org.antlr.v4.runtime.tree._

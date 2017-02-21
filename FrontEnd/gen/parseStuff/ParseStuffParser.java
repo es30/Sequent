@@ -1003,7 +1003,7 @@ public class ParseStuffParser extends Parser {
 	}
 
 	public static class Quantified_variableContext extends ParserRuleContext {
-		public scala.Tuple2<scala.Enumeration.Value,java.lang.String> q;
+		public scala.Enumeration.Value q;
 		public VariableContext variable() {
 			return getRuleContext(VariableContext.class,0);
 		}

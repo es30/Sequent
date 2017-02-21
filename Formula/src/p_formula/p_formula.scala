@@ -39,23 +39,23 @@ trait P_SFormula {
 
   def formulaString(): String
 
+  final override
+  def equals(obj: Any): Boolean =
+    equals(None, obj).result
+
   def equals(
-      stack: List[(P_Formula, P_Formula)],
+      continuation: Option[() => TailRec[Boolean]],
       obj: Any
     ): TailRec[Boolean]
 
   final override
-  def equals(obj: Any): Boolean =
-    equals(Nil, obj).result
+  def hashCode(): Int =
+    hashCode(None, 0).result
 
   def hashCode(
-      stack: List[P_Formula],
+      continuation: Option[Int => TailRec[Int]],
       hash: Int
     ): TailRec[Int]
-
-  final override
-  def hashCode(): Int =
-    hashCode(Nil, 0).result
 
 }
 
@@ -98,22 +98,29 @@ object P_Formula {
 
   val noError: Option[Error] = None
 
-  def equals_continue(stack: List[(P_Formula, P_Formula)], retval: Boolean):
-  TailRec[Boolean] =
-    if (!retval || stack.isEmpty)
-      done(retval)
-    else {
-      val (subj, obj) = stack.head
-      tailcall(subj.equals(stack.tail, obj))
-    }
+  def equals_continue(
+      continuation: Option[() => TailRec[Boolean]],
+      retval: Boolean
+    ): TailRec[Boolean] =
+    if (retval)
+      continuation match {
+        case Some(cont) =>
+          tailcall(cont())
+        case None =>
+          done(true)
+      }
+    else
+      done(false)
 
-  def hashCode_continue(stack: List[P_Formula], retval: Int):
-  TailRec[Int] =
-    if (stack.isEmpty)
-      done(retval)
-    else {
-      val f = stack.head
-      tailcall(f.hashCode(stack.tail, retval))
+  def hashCode_continue(
+      continuation: Option[Int => TailRec[Int]],
+      retval: Int
+    ): TailRec[Int] =
+    continuation match {
+      case Some(cont) =>
+        tailcall(cont(retval))
+      case None =>
+        done(retval)
     }
 
 }
@@ -130,7 +137,7 @@ case class P_FormulaProposition (p: P_Proposition, override val error: Option[Er
 
   final
   def equals(
-      stack: List[(P_Formula, P_Formula)],
+      continuation: Option[() => TailRec[Boolean]],
       obj: Any
     ): TailRec[Boolean] = {
     val retval =
@@ -140,15 +147,15 @@ case class P_FormulaProposition (p: P_Proposition, override val error: Option[Er
         case _ =>
           false
       }
-    tailcall(equals_continue(stack, retval))
+    tailcall(equals_continue(continuation, retval))
   }
 
   final
   def hashCode(
-      stack: List[P_Formula],
+      continuation: Option[Int => TailRec[Int]],
       hash: Int
     ): TailRec[Int] =
-    tailcall(hashCode_continue(stack, 3 * hash + p.hashCode()))
+    tailcall(hashCode_continue(continuation, 3 * hash + p.hashCode()))
 
 }
 
@@ -167,7 +174,7 @@ case class P_FormulaApplication (p: P_Predicate, a: P_Applicand, override val er
 
   final
   def equals(
-      stack: List[(P_Formula, P_Formula)],
+      continuation: Option[() => TailRec[Boolean]],
       obj: Any
     ): TailRec[Boolean] = {
     val retval =
@@ -177,15 +184,15 @@ case class P_FormulaApplication (p: P_Predicate, a: P_Applicand, override val er
         case _ =>
           false
       }
-    tailcall(equals_continue(stack, retval))
+    tailcall(equals_continue(continuation, retval))
   }
 
   final
   def hashCode(
-      stack: List[P_Formula],
+      continuation: Option[Int => TailRec[Int]],
       hash: Int
     ): TailRec[Int] =
-    tailcall(hashCode_continue(stack, 5 * hash + p.hashCode() + a.hashCode()))
+    tailcall(hashCode_continue(continuation, 5 * hash + p.hashCode() + a.hashCode()))
 
 }
 
@@ -198,22 +205,22 @@ case class P_FormulaNegation (f1: P_Formula, override val error: Option[Error] =
 
   final
   def equals(
-      stack: List[(P_Formula, P_Formula)],
+      continuation: Option[() => TailRec[Boolean]],
       obj: Any
     ): TailRec[Boolean] =
     obj match {
       case f: P_FormulaNegation =>
-        tailcall(f1.equals(stack, f.f1))
+        tailcall(f1.equals(continuation, f.f1))
       case _ =>
-        tailcall(equals_continue(stack, false))
+        tailcall(equals_continue(continuation, false))
     }
 
   final
   def hashCode(
-      stack: List[P_Formula],
+      continuation: Option[Int => TailRec[Int]],
       hash: Int
     ): TailRec[Int] =
-    tailcall(f1.hashCode(stack, 7 * hash))
+    tailcall(f1.hashCode(continuation, 7 * hash))
 
 }
 
@@ -229,6 +236,7 @@ trait P_FormulaDyadic {
   val f1: P_Formula
   val f2: P_Formula
   val connective: String
+
   def replace(f1: P_Formula, f2: P_Formula): P_Formula
 
   lazy val bumper = " " + connective + " "
@@ -237,18 +245,30 @@ trait P_FormulaDyadic {
     "(" + f1.formulaString + bumper + f2.formulaString + ")"
 
   final
-  def equals(stack: List[(P_Formula, P_Formula)], obj: Any):
-      TailRec[Boolean] =
+  def equals(
+      continuation: Option[() => TailRec[Boolean]],
+      obj: Any
+    ): TailRec[Boolean] =
     obj match {
       case f: P_FormulaDyadic if kind == f.kind =>
-        tailcall(f1.equals((f2, f.f2) :: stack, f.f1))
+        def cont1: () => TailRec[Boolean] =
+          () => tailcall(f2.equals(continuation, f.f2))
+
+        tailcall(f1.equals(Some(cont1), f.f1))
       case _ =>
-        tailcall(equals_continue(stack, false))
+        tailcall(equals_continue(continuation, false))
     }
 
   final
-  def hashCode(stack: List[P_Formula], hash: Int): TailRec[Int] =
-    tailcall(f1.hashCode(f2 :: stack, hash + kind.hashCode()))
+  def hashCode(
+      continuation: Option[Int => TailRec[Int]],
+      hash: Int
+    ): TailRec[Int] = {
+    def cont1: Int => TailRec[Int] =
+      (hash: Int) => tailcall(f2.hashCode(continuation, hash))
+
+    tailcall(f1.hashCode(Some(cont1), hash + kind.hashCode()))
+  }
 
 }
 
@@ -287,55 +307,79 @@ case class P_FormulaBiconditional (f1: P_Formula, f2: P_Formula, override val er
 
 
 object QuantificationKind extends Enumeration {
-//  type Kind = Value
-//  val Existential, Universal = Value
-  type Kind = (Value, String)
-  val Existential = (Value, "∃")
-  val Universal   = (Value, "∀")
+  type Kind = Value
+  val Universal, Existential = Value
 }
 
-case class P_FormulaQuantification(kind: QuantificationKind.Kind,
-    v: P_VarName, f1: P_Formula,
-    override val error: Option[Error] = None
-  ) extends P_Formula {
 
-  override
-  def formulaString() = "(" + kind._2 + v.toString + "." + f1.formulaString + ")"
+trait P_FormulaQuantification {
+  val kind: QuantificationKind.Kind
+  val v: P_VarName
+  val f1: P_Formula
+  val quantifier: String
+
+  def replace(f1: P_Formula): P_Formula
+
+  def formulaString() = "(" + quantifier + v.toString + "." + f1.formulaString + ")"
 
   final
   def equals(
-      stack: List[(P_Formula, P_Formula)],
+      continuation: Option[() => TailRec[Boolean]],
       obj: Any
     ): TailRec[Boolean] =
     obj match {
       case f: P_FormulaQuantification if f.v == v =>
-        tailcall(f1.equals(stack, f.f1))
+        tailcall(f1.equals(continuation, f.f1))
       case _ =>
-        tailcall(equals_continue(stack, false))
+        tailcall(equals_continue(continuation, false))
     }
 
   final
   def hashCode(
-      stack: List[P_Formula],
+      continuation: Option[Int => TailRec[Int]],
       hash: Int
     ): TailRec[Int] =
-    tailcall(f1.hashCode(stack, 11 * hash + kind.hashCode() + v.hashCode()))
-
-}
-
-/*
-class FormulaQuantificationExistential private(error: OError, v: TermVariable, f1: Formula)
-  extends FormulaQuantification(error, QuantificationKind.Existential, v, f1, "∃") {
-
-  def this(v: TermVariable, f1: Formula) = this(None, v, f1)
+    tailcall(f1.hashCode(continuation, 11 * hash + kind.hashCode() + v.hashCode()))
 
 }
 
 
-class FormulaQuantificationUniversal private(error: OError, v: TermVariable, f1: Formula)
-  extends FormulaQuantification(error, QuantificationKind.Universal, v, f1, "∀") {
+object P_FormulaQuantification {
 
-  def this(v: TermVariable, f1: Formula) = this(None, v, f1)
+  def construct(
+      q: QuantificationKind.Kind,
+      v: P_VarName,
+      f1: P_Formula,
+      error: Option[Error] = None
+    ): P_Formula =
+    q match {
+      case QuantificationKind.Universal =>
+        P_FormulaQuantificationUniversal(v, f1 , error)
+      case QuantificationKind.Existential =>
+        P_FormulaQuantificationExistential(v, f1 , error)
+    }
 
 }
-*/
+
+
+case class P_FormulaQuantificationUniversal (
+    v: P_VarName,
+    f1: P_Formula,
+    override val error: Option[Error] = None
+  ) extends P_Formula with P_FormulaQuantification {
+  override def formulaString() = super[P_FormulaQuantification].formulaString
+  val kind = QuantificationKind.Universal
+  val quantifier = "∀"
+  def replace(f1: P_Formula) = copy(f1 = f1)
+}
+
+case class P_FormulaQuantificationExistential (
+    v: P_VarName,
+    f1: P_Formula,
+    override val error: Option[Error] = None
+  ) extends P_Formula with P_FormulaQuantification {
+  override def formulaString() = super[P_FormulaQuantification].formulaString
+  val kind = QuantificationKind.Existential
+  val quantifier = "∃"
+  def replace(f1: P_Formula) = copy(f1 = f1)
+}

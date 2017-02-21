@@ -49,22 +49,22 @@ abstract class P_Term (
 ) extends Term(error) {
 
   def equals(
-      stack: List[(Iterator[P_Term], Iterator[P_Term])],
+      continuation: Option[() => TailRec[Boolean]],
       obj: Any
     ): TailRec[Boolean]
 
   final override
   def equals(obj: Any): Boolean =
-    equals(Nil, obj).result
+    equals(None, obj).result
 
   def hashCode(
-      stack: List[Iterator[P_Term]],
+      continuation: Option[Int => TailRec[Int]],
       hash: Int
     ): TailRec[Int]
 
   final override
   def hashCode(): Int =
-    hashCode(Nil, 0).result
+    hashCode(None, 0).result
 
 }
 
@@ -83,44 +83,30 @@ object P_Term {
   def lookupFunction(s: String, f: P_Function) = functionMap.getOrElseUpdate(s, f)
 
 
-  def equals_1(
-      stack: List[(Iterator[P_Term], Iterator[P_Term])]
-    ): TailRec[Boolean] = {
-    val (subjs, objs) = stack.head
-    if (subjs.hasNext)
-      tailcall(subjs.next().equals(stack, objs.next()))
-    else
-      tailcall(equals_continue(stack.tail, true))
-  }
-
   def equals_continue(
-      stack: List[(Iterator[P_Term], Iterator[P_Term])],
+      continuation: Option[() => TailRec[Boolean]],
       retval: Boolean
     ): TailRec[Boolean] =
-    if (!retval || stack.isEmpty)
-      done(retval)
+    if (retval)
+      continuation match {
+        case Some(cont) =>
+          tailcall(cont())
+        case None =>
+          done(true)
+      }
     else
-      tailcall(equals_1(stack))
-
-  def hashCode_1(
-      stack: List[Iterator[P_Term]],
-      hash: Int
-    ): TailRec[Int] = {
-    val subjs = stack.head
-    if (subjs.hasNext)
-      tailcall(subjs.next().hashCode(stack, hash))
-    else
-      tailcall(hashCode_continue(stack.tail, hash))
-  }
+      done(false)
 
   def hashCode_continue(
-      stack: List[Iterator[P_Term]],
+      continuation: Option[Int => TailRec[Int]],
       retval: Int
     ): TailRec[Int] =
-    if (stack.isEmpty)
-      done(retval)
-    else
-      tailcall(hashCode_1(stack, retval))
+    continuation match {
+      case Some(cont) =>
+        tailcall(cont(retval))
+      case None =>
+        done(retval)
+    }
 
 }
 
@@ -135,7 +121,7 @@ case class P_TermConstant(c: P_Constant, override val error: Option[Error] = Non
 
   final
   def equals(
-      stack: List[(Iterator[P_Term], Iterator[P_Term])],
+      continuation: Option[() => TailRec[Boolean]],
       obj: Any
     ): TailRec[Boolean] = {
     val retval =
@@ -145,15 +131,15 @@ case class P_TermConstant(c: P_Constant, override val error: Option[Error] = Non
         case _ =>
           false
       }
-    tailcall(equals_continue(stack, retval))
+    tailcall(equals_continue(continuation, retval))
   }
 
   final
   def hashCode(
-      stack: List[Iterator[P_Term]],
+      continuation: Option[Int => TailRec[Int]],
       hash: Int
     ): TailRec[Int] =
-    tailcall(hashCode_continue(stack, 3 * hash + c.hashCode()))
+    tailcall(hashCode_continue(continuation, 3 * hash + c.hashCode()))
 
 }
 
@@ -165,7 +151,7 @@ case class P_TermVariable(v: P_VarName, override val error: Option[Error] = None
 
   final
   def equals(
-      stack: List[(Iterator[P_Term], Iterator[P_Term])],
+      continuation: Option[() => TailRec[Boolean]],
       obj: Any
     ): TailRec[Boolean] = {
     val retval =
@@ -175,15 +161,15 @@ case class P_TermVariable(v: P_VarName, override val error: Option[Error] = None
         case _ =>
           false
       }
-    tailcall(equals_continue(stack, retval))
+    tailcall(equals_continue(continuation, retval))
   }
 
   final
   def hashCode(
-      stack: List[Iterator[P_Term]],
+      continuation: Option[Int => TailRec[Int]],
       hash: Int
     ): TailRec[Int] =
-    tailcall(hashCode_continue(stack, 5 * hash + v.hashCode()))
+    tailcall(hashCode_continue(continuation, 5 * hash + v.hashCode()))
 
 }
 
@@ -201,22 +187,22 @@ case class P_TermApplication(f: P_Function, a: P_Applicand, override val error: 
 
   final
   def equals(
-      stack: List[(Iterator[P_Term], Iterator[P_Term])],
+      continuation: Option[() => TailRec[Boolean]],
       obj: Any
     ): TailRec[Boolean] =
     obj match {
-      case t: P_TermApplication if t.f == f && t.a.terms.length == a.terms.length =>
-        tailcall(a.equals(stack, t.a.terms))
+      case t: P_TermApplication if t.f == f =>
+        tailcall(a.equals(continuation, t.a.terms))
       case _ =>
-        tailcall(equals_continue(stack, false))
+        tailcall(equals_continue(continuation, false))
     }
 
   final
   def hashCode(
-     stack: List[Iterator[P_Term]],
-     hash: Int
+      continuation: Option[Int => TailRec[Int]],
+      hash: Int
     ): TailRec[Int] =
-    tailcall(a.hashCode(stack, 7 * hash + f.hashCode()))
+    tailcall(a.hashCode(continuation, 7 * hash + f.hashCode()))
 
 }
 
@@ -224,39 +210,73 @@ case class P_TermApplication(f: P_Function, a: P_Applicand, override val error: 
 // ====================================================================
 
 
-case class P_Applicand(terms: Array[P_Term]) {
-
-  final
-  def equals(
-      stack: List[(Iterator[P_Term], Iterator[P_Term])],
-      obj: Array[P_Term]
-    ): TailRec[Boolean] = {
-    val subjs = terms.iterator
-    val objs = obj.iterator
-    tailcall(equals_1((subjs, objs) :: stack))
-  }
+//object P_Applicand {type Terms = immutable.ArraySeq[P_Term]}
+                                //  aspirational, via IndexedSeq
+object P_Applicand {type Terms = Array[P_Term]}
+import P_Applicand.Terms
+case class P_Applicand(terms: Terms) {
 
   final override
   def equals(obj: Any): Boolean =
     obj match {
       case a: P_Applicand =>
-        equals(Nil, a.terms).result
+        equals(None, a.terms).result
       case _ =>
         false
     }
 
   final
-  def hashCode(
-      stack: List[Iterator[P_Term]],
-      hash: Int
-    ): TailRec[Int] = {
-    val subjs = terms.iterator
-    tailcall(hashCode_1(subjs :: stack, hash))
+  def equals(
+      continuation: Option[() => TailRec[Boolean]],
+      obj: Terms
+    ): TailRec[Boolean] = {
+    val length = terms.length
+    if (obj.length == length) {
+
+      def looper(
+          termIndex: Int
+        ): TailRec[Boolean] =
+        if (termIndex >= length)
+          tailcall(equals_continue(continuation, true))
+        else {
+          def cont1: () => TailRec[Boolean] =
+            () => tailcall(looper(termIndex + 1))
+          tailcall(terms(termIndex).equals(Some(cont1), obj(termIndex)))
+        }
+
+      tailcall(looper(0))
+
+    }
+    else
+      done(false)
   }
 
   final override
   def hashCode(): Int =
-    hashCode(Nil, 0).result
+    hashCode(None, 0).result
+
+  final
+  def hashCode(
+      continuation: Option[Int => TailRec[Int]],
+      hash: Int
+    ): TailRec[Int] = {
+    val length = terms.length
+
+    def looper(
+        termIndex: Int,
+        hash: Int
+      ): TailRec[Int] =
+      if (termIndex >= length)
+        tailcall(hashCode_continue(continuation, hash))
+      else {
+        def cont1: Int => TailRec[Int] =
+          (hash: Int) => tailcall(looper(termIndex + 1, hash))
+        tailcall(terms(termIndex).hashCode(Some(cont1), hash))
+      }
+
+    tailcall(looper(0, hash))
+
+  }
 
   override
   def toString =

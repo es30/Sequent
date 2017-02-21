@@ -115,7 +115,7 @@ quantified_formula returns [Formula f]
                                 # Quantified_formula_type_compound
 ;
 
-quantified_variable returns [scala.Tuple2<scala.Enumeration.Value,java.lang.String> q]
+quantified_variable returns [scala.Enumeration.Value q]
 	:	(
                 '\u2200'        {$q=p_formula.QuantificationKind.Universal();}
                                 //  ∀  for all

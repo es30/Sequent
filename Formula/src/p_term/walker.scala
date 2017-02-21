@@ -20,23 +20,23 @@ object walker {
         visitor: Visitor,
         vars: Set[P_VarName]
       ): Boolean =
-      walk(Nil, visitor, vars).result
+      walk(None, visitor, vars).result
 
     def walk(
-        stack: List[Iterator[P_Term]],
+        continuation: Option[() => TailRec[Boolean]],
         visitor: Visitor,
         vars: Set[P_VarName]
       ): TailRec[Boolean] =
       term match {
 
         case tc: P_TermConstant =>
-          tailcall(walk_continue(stack, visitor, vars, false))
+          tailcall(walk_continue(continuation, false))
 
         case tv: P_TermVariable =>
-          tailcall(walk_continue(stack, visitor, vars, visitor.variable(vars, tv.v)))
+          tailcall(walk_continue(continuation, visitor.variable(vars, tv.v)))
 
         case ta: P_TermApplication =>
-          tailcall(ta.a.walk(stack, visitor, vars))
+          tailcall(ta.a.walk(continuation, visitor, vars))
 
       }
 
@@ -45,37 +45,43 @@ object walker {
   implicit class P_Applicand_walker(val applicand: P_Applicand) {
 
     def walk(
-        stack: List[Iterator[P_Term]],
+        continuation: Option[() => TailRec[Boolean]],
         visitor: Visitor,
         vars: Set[P_VarName]
       ): TailRec[Boolean] = {
-      val terms = applicand.terms.iterator
-      tailcall(walk_1(terms :: stack, visitor, vars))
+      val terms = applicand.terms
+      val length = terms.length
+
+      def looper(
+          termIndex: Int
+        ): TailRec[Boolean] =
+        if (termIndex >= length)
+          tailcall(walk_continue(continuation, false))
+        else {
+          def cont1: () => TailRec[Boolean] =
+            () => tailcall(looper(termIndex + 1))
+
+          tailcall(terms(termIndex).walk(Some(cont1), visitor, vars))
+        }
+
+      tailcall(looper(0))
+
     }
 
   }
 
-  def walk_1(
-      stack: List[Iterator[P_Term]],
-      visitor: Visitor,
-      vars: Set[P_VarName]
-    ): TailRec[Boolean] = {
-    val terms = stack.head
-    if (terms.hasNext)
-      tailcall(terms.next().walk(stack, visitor, vars))
-    else
-      tailcall(walk_continue(stack.tail, visitor, vars, false))
-  }
-
   def walk_continue(
-      stack: List[Iterator[P_Term]],
-      visitor: Visitor,
-      vars: Set[P_VarName],
+      continuation: Option[() => TailRec[Boolean]],
       retval: Boolean
     ): TailRec[Boolean] =
-    if (retval || stack.isEmpty)
-      done(retval)
+    if (retval)
+      done(true)
     else
-      tailcall(walk_1(stack, visitor, vars))
+      continuation match {
+        case Some(cont) =>
+          tailcall(cont())
+        case None =>
+          done(false)
+      }
 
 }

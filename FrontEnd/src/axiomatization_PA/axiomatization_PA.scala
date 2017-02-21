@@ -1,27 +1,25 @@
-package axiomatization
+package axiomatization_PA
 
-import formula.Formula
-import p_axiomatization.prefixWalker.P_Formula_prefixWalker
-import p_axiomatization.{AxiomTemplate, AxiomTemplateList, P_Axiomatization, Visitor}
-import p_axiomatization.checkSubstitutionP_Formula.P_FormulaChecker
-import p_axiomatization.deconstructP_Formula.FormulaDeconstructor
-import p_formula._
+import scala.util.control.TailCalls.{TailRec, done, tailcall}
+
 import p_term.P_Term.{lookupConstant, lookupVarName}
 import p_term.{P_VarName, P_Term, P_TermConstant}
 import p_term.walker.P_Applicand_walker
-import parseStuff._
-import closureChecker.P_Formula_isClosed
-
-import scala.util.control.TailCalls.{TailRec, done, tailcall}
+import formula.Formula
+import p_formula._
+import p_axiomatization.{AxiomTemplate, AxiomTemplateList, P_Axiomatization, Visitor}
+import p_axiomatization.prefixWalker.P_Formula_prefixWalker
+import p_axiomatization.deconstruct.FormulaDeconstructor
+import p_axiomatization.checkSubstitution.P_FormulaChecker
 
 /**
   * Created by EdSnow on 1/5/2017.
   */
 
 
-object closureChecker {
+private object closureChecker {
 
-  class TermChecker extends p_term.Visitor {
+  private class TermChecker extends p_term.Visitor {
     def variable(vars: Set[P_VarName], v: P_VarName): Boolean =
       !(vars contains v)
   }
@@ -29,71 +27,77 @@ object closureChecker {
   implicit class P_Formula_isClosed(val formula: P_Formula) {
 
     def isClosed(vars: Set[P_VarName]): Boolean =
-      ! isNotClosed(Nil, new TermChecker, vars).result
+      isClosed(None, new TermChecker, vars).result
 
-    def isNotClosed(
-        stack: List[P_Formula],
+    private def isClosed(
+        continuation: Option[() => TailRec[Boolean]],
         visitor: TermChecker,
         vars: Set[P_VarName]
       ): TailRec[Boolean] =
       formula match {
 
         case ap: P_FormulaProposition =>
-          tailcall(isNotClosed_continue(stack, visitor, vars, false))
+          tailcall(isClosed_continue(continuation, true))
 
         case aa: P_FormulaApplication =>
-          val found = aa.a.walk(Nil, visitor, vars).result
-          tailcall(isNotClosed_continue(stack, visitor, vars, found))
+          val found = aa.a.walk(None, visitor, vars).result
+          tailcall(isClosed_continue(continuation, !found))
 
         case an: P_FormulaNegation =>
-          tailcall(an.f1.isNotClosed(stack, visitor, vars))
+          tailcall(an.f1.isClosed(continuation, visitor, vars))
 
         case ad: P_FormulaDyadic =>
-          tailcall(ad.f1.isNotClosed(ad.f2 :: stack, visitor, vars))
+          def cont1: () => TailRec[Boolean] =
+            () => tailcall(ad.f2.isClosed(continuation, visitor, vars))
+          tailcall(ad.f1.isClosed(Some(cont1), visitor, vars))
 
         case aq: P_FormulaQuantification =>
-          tailcall(aq.f1.isNotClosed(stack, visitor, vars + aq.v))
+          tailcall(aq.f1.isClosed(continuation, visitor, vars + aq.v))
 
       }
 
   }
 
-  def isNotClosed_continue(
-      stack: List[P_Formula],
-      visitor: TermChecker,
-      vars: Set[P_VarName],
+  private def isClosed_continue(
+      continuation: Option[() => TailRec[Boolean]],
       retval: Boolean
     ): TailRec[Boolean] =
-    if (!retval || stack.isEmpty)
-      done(retval)
-    else {
-      val f2 = stack.head
-      tailcall(f2.isNotClosed(stack.tail, visitor, vars))
-    }
+    if (retval)
+      continuation match {
+        case Some(cont) =>
+          tailcall(cont())
+        case None =>
+          done(true)
+      }
+    else
+      done(false)
 
 }
 
 
-object axiomatization_PA extends P_Axiomatization("PA") {
+object subsumer extends P_Axiomatization("PA") {
 
-  val template_1 = pf("∀x.(0≠S(x))")
-  val template_2 = pf("∀x∀y.(S(x)=S(y) → x=y)")
+  import parseStuff._
+  import closureChecker.P_Formula_isClosed
 
-  val template_3 = pf("∀x.(x+0 = x)")
-  val template_4 = pf("∀x∀y.(x+S(y) = S(x+y))")
+  private val template_1 = pf("∀x.(0≠S(x))")
+  private val template_2 = pf("∀x∀y.(S(x)=S(y) → x=y)")
 
-  val template_5 = pf("∀x.(x×0 = 0)")
-  val template_6 = pf("∀x∀y.(x×S(y) = x×y+x)")
+  private val template_3 = pf("∀x.(x+0 = x)")
+  private val template_4 = pf("∀x∀y.(x+S(y) = S(x+y))")
 
-  val template_7 = pf("Z ∧ ∀x.(Z → Z) → ∀x.Z")
+  private val template_5 = pf("∀x.(x×0 = 0)")
+  private val template_6 = pf("∀x∀y.(x×S(y) = x×y+x)")
+
+  private val template_7 = pf("Z ∧ ∀x.(Z → Z) → ∀x.Z")
   //  schema:  ϕ(0) ∧ ∀x(ϕ(x) → ϕ(S(x))) → ∀xϕ(x)
 
-  class PrefixVisitor extends Visitor[Set[P_VarName]] {
+  private class PrefixVisitor extends Visitor[Set[P_VarName]] {
     def collect(v: P_VarName, vars: Set[P_VarName]): Set[P_VarName] =
       vars + v
   }
 
-  val inductionSchemaMatcher = {
+  private val inductionSchemaMatcher = {
     val deconstructor = template_7.deconstructor
     val var_x   = lookupVarName("x")
     val const_0 = P_TermConstant(lookupConstant("0"))

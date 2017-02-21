@@ -6,6 +6,7 @@
 package p_sequent
 
 import p_formula._
+
 import p_sequent.Cedent.CedentTemplate
 
 

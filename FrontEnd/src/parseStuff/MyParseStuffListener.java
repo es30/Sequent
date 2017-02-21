@@ -29,7 +29,7 @@ public class MyParseStuffListener implements ParseStuffListener {
 	static scala.Function2<P_Axiomatization, scala.Option<error.Error>, SFormula> formulaAxiomatization = parseStuff.formulaBuilder.package$.MODULE$.formulaAxiomatization();
 	static scala.Function3<P_Predicate, Term[], scala.Option<error.Error>, Formula> formulaApplication = parseStuff.formulaBuilder.package$.MODULE$.formulaApplication();
 	static scala.Function2<Formula, scala.Option<error.Error>, Formula> formulaNegation = parseStuff.formulaBuilder.package$.MODULE$.formulaNegation();
-	static scala.Function4<scala.Tuple2<scala.Enumeration.Value, java.lang.String>, P_VarName, Formula, scala.Option<error.Error>, Formula> formulaQuantification = parseStuff.formulaBuilder.package$.MODULE$.formulaQuantification();
+	static scala.Function4<scala.Enumeration.Value, P_VarName, Formula, scala.Option<error.Error>, Formula> formulaQuantification = parseStuff.formulaBuilder.package$.MODULE$.formulaQuantification();
 	static scala.Function3<P_Function, Term[], scala.Option<error.Error>, Term> termApplication = parseStuff.formulaBuilder.package$.MODULE$.termApplication();
 	static scala.Function2<P_VarName, scala.Option<error.Error>, Term> termVariable = parseStuff.formulaBuilder.package$.MODULE$.termVariable();
 

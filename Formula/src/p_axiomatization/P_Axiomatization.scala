@@ -66,7 +66,7 @@ case class P_SFormulaAxiomatization(a: P_Axiomatization, override val error: Opt
 
   final
   def equals(
-      stack: List[(P_Formula, P_Formula)],
+      continuation: Option[() => TailRec[Boolean]],
       obj: Any
     ): TailRec[Boolean] = {
     val retval =
@@ -76,15 +76,15 @@ case class P_SFormulaAxiomatization(a: P_Axiomatization, override val error: Opt
         case _ =>
           false
       }
-    tailcall(equals_continue(stack, retval))
+    tailcall(equals_continue(continuation, retval))
   }
 
   final
   def hashCode(
-      stack: List[P_Formula],
+      continuation: Option[Int => TailRec[Int]],
       hash: Int
     ): TailRec[Int] =
-    tailcall(hashCode_continue(stack, 17 * hash + + a.hashCode()))
+    tailcall(hashCode_continue(continuation, 17 * hash + + a.hashCode()))
 
 }
 

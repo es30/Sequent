@@ -62,20 +62,18 @@ object substitute {
 
   implicit class P_ApplicandExtension(val a: P_Applicand) {
 
-    def toError(errorList: List[(Error, Int)]): Option[Error] = {
+    def toError(errorList: List[(Error, Int)]): Option[Error] =
       if (errorList.isEmpty)
         None
       else
         Some(Error_subst_applicand(errorList.reverse))
-
-    }
 
     def substitution(
         t: P_Term,
         x: P_VarName,
         conflict: Seq[P_VarName]
       ): Option[(P_Applicand, Option[Error])] = {
-      val subst = a.substitution_1(Nil, None, 0, t, x, conflict).result
+      val subst = a.substitution_1(None, None, 0, t, x, conflict).result
       subst match {
         case None =>
           None
@@ -85,7 +83,7 @@ object substitute {
     }
 
     def substitution_1(
-        stack: List[Option[(P_Applicand, List[(Error, Int)])] => TailRec[Option[(P_Applicand, List[(Error, Int)])]]],
+        continuation: Option[Option[(P_Applicand, List[(Error, Int)])] => TailRec[Option[(P_Applicand, List[(Error, Int)])]]],
         firstState: Option[(P_Applicand, List[(Error, Int)])],
         firstTermIndex: Int,
         t: P_Term,
@@ -132,7 +130,7 @@ object substitute {
                 Some((target, newErrorList))
             }
 
-          def continuation(ta: P_TermApplication) =
+          def cont1(ta: P_TermApplication) =
             (returnedApplicand: Option[(P_Applicand, List[(Error, Int)])]) => {
                 val newTa =
                   returnedApplicand match {
@@ -142,16 +140,16 @@ object substitute {
                       Some((ta.copy(a = applicand), toError(errorList)))
                   }
                 val newState = update(newTa)
-                tailcall(a.substitution_1(stack, newState, termIndex + 1, t, x, conflict))
+                tailcall(a.substitution_1(continuation, newState, termIndex + 1, t, x, conflict))
               }: TailRec[Option[(P_Applicand, List[(Error, Int)])]]
 
           if (termIndex >= length)
             //  Processing of the current applicand is complete.
-            if (stack.isEmpty)
-              done(state)
-            else {
-              val continuation = stack.head
-              tailcall(continuation(state))
+            continuation match {
+              case Some(cont) =>
+                tailcall(cont(state))
+              case None =>
+                done(state)
             }
           else {
             val nextTerm = terms(termIndex)
@@ -160,8 +158,7 @@ object substitute {
                 val newState = update(subst)
                 tailcall(looper(newState, termIndex + 1))
               case Right(ta) =>
-                val newStack = continuation(ta) :: stack
-                tailcall(ta.a.substitution_1(newStack, None, 0, t, x, conflict))
+                tailcall(ta.a.substitution_1(Some(cont1(ta)), None, 0, t, x, conflict))
             }
           }
         }
@@ -243,10 +240,10 @@ object substitute {
         x: P_VarName,
         vars: Set[P_VarName]
       ): Option[(P_Formula, Option[Error])] =
-      substitution_1(Nil, t, x, vars, Nil).result
+      substitution_1(None, t, x, vars, Nil).result
 
     def substitution_1(
-        stack: List[Option[(P_Formula, Option[Error])] => TailRec[Option[(P_Formula, Option[Error])]]],
+        continuation: Option[Option[(P_Formula, Option[Error])] => TailRec[Option[(P_Formula, Option[Error])]]],
         t: P_Term,
         x: P_VarName,
         vars: Set[P_VarName],
@@ -255,7 +252,7 @@ object substitute {
       formula match {
 
         case ap: P_FormulaProposition =>
-          tailcall(substitution_continue(stack, None))
+          tailcall(substitution_continue(continuation, None))
 
         case aa: P_FormulaApplication =>
           val subst = aa.a.substitution(t, x, conflict)
@@ -267,7 +264,7 @@ object substitute {
                 val (a, error) = applicand
                 Some((aa.copy(a = a), error))
             }
-          tailcall(substitution_continue(stack, retval))
+          tailcall(substitution_continue(continuation, retval))
 
         case an: P_FormulaNegation =>
 
@@ -281,16 +278,16 @@ object substitute {
                     val (f1, error) = sf1
                     Some((an.copy(f1 = f1), error))
                 }
-              tailcall(substitution_continue(stack, retval))
+              tailcall(substitution_continue(continuation, retval))
             }
 
-          tailcall(an.f1.substitution_1(cont1 :: stack, t, x, vars, conflict))
+          tailcall(an.f1.substitution_1(Some(cont1), t, x, vars, conflict))
 
         case ad: P_FormulaDyadic =>
 
           def cont1: Option[(P_Formula, Option[Error])] => TailRec[Option[(P_Formula, Option[Error])]] =
             (subst_f1: Option[(P_Formula, Option[Error])]) =>
-              tailcall(ad.f2.substitution_1(cont2(subst_f1) :: stack, t, x, vars, conflict))
+              tailcall(ad.f2.substitution_1(Some(cont2(subst_f1)), t, x, vars, conflict))
 
           def cont2(subst_f1: Option[(P_Formula, Option[Error])]) =
             (subst_f2: Option[(P_Formula, Option[Error])]) => {
@@ -303,10 +300,10 @@ object substitute {
                   val error = collect(Seq(error1, error2))
                   Some(ad.replace(f1, f2), error)
                 }
-              tailcall(substitution_continue(stack, retval))
+              tailcall(substitution_continue(continuation, retval))
             }
 
-          tailcall(ad.f1.substitution_1(cont1 :: stack, t, x, vars, conflict))
+          tailcall(ad.f1.substitution_1(Some(cont1), t, x, vars, conflict))
 
         case aq: P_FormulaQuantification =>
 
@@ -318,34 +315,34 @@ object substitute {
                     None
                   case Some(sf1) =>
                     val (f1, error) = sf1
-                    Some((aq.copy(f1 = f1), error))
+                    Some((aq.replace(f1), error))
                 }
-              tailcall(substitution_continue(stack, retval))
+              tailcall(substitution_continue(continuation, retval))
             }
 
           if (aq.v == x)
             //  x is bound and no longer subject to substitution.
-            tailcall(substitution_continue(stack, None))
+            tailcall(substitution_continue(continuation, None))
           else {
             val newConflict =
               if (vars contains aq.v)
                 aq.v +: conflict
               else
                 conflict
-            tailcall(aq.f1.substitution_1(cont1 :: stack, t, x, vars, newConflict))
+            tailcall(aq.f1.substitution_1(Some(cont1), t, x, vars, newConflict))
           }
 
       }
 
     def substitution_continue(
-        stack: List[Option[(P_Formula, Option[Error])] => TailRec[Option[(P_Formula, Option[Error])]]],
+        continuation: Option[Option[(P_Formula, Option[Error])] => TailRec[Option[(P_Formula, Option[Error])]]],
         retval: Option[(P_Formula, Option[Error])]
       ): TailRec[Option[(P_Formula, Option[Error])]] =
-      if (stack.isEmpty)
-        done(retval)
-      else {
-        val continuation = stack.head
-        tailcall(continuation(retval))
+      continuation match {
+        case Some(cont) =>
+          tailcall(cont(retval))
+        case None =>
+          done(retval)
       }
 
     import variables._
@@ -353,10 +350,10 @@ object substitute {
     def substitute(t: P_Term, x: P_VarName): (P_Formula, Option[Error]) = {
       val subst = formula.substitution(t, x, t.variables())
       subst match {
-        case None =>
-          (formula, None)
         case Some(sub) =>
           sub
+        case None =>
+          (formula, None)
       }
     }
 

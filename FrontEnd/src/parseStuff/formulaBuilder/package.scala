@@ -97,13 +97,13 @@ package object formulaBuilder {
                 (new Error_empty(t.error), pos)
             }
             val (p1, p2) = a.span(_.isInstanceOf[P_Term])
-            val termArray =
+            val terms =
               if (p2.length == 0)
                 Some(P_Applicand(p1.map(_.asInstanceOf[P_Term])))
               else
                 None
             val errorList: List[(Error, Int)] = a.toList.zip(Stream from 1).collect(inError)
-            (termArray, None)       // <==== fix!!!
+            (terms, None)       // <==== fix!!!
         }
       }: AType[P_Applicand])
 
@@ -192,7 +192,7 @@ package object formulaBuilder {
   import shapeless.ops.function.{FnFromProduct, FnToProduct}
 
 /*
-  def parseStuff.formulaBuilder[Ta <: HList, T <: HList, F, Tout](f: F)
+  def formulaBuilder[Ta <: HList, T <: HList, F, Tout](f: F)
     (implicit
       ftp: FnToProduct.Aux[F, T => Option[Error] => Tout],
       vet: VetApplicand[Ta, T],
@@ -223,103 +223,112 @@ package object formulaBuilder {
 // ====================================================================
 
   val formulaBiconditional =
-    parseStuff.formulaBuilder(
+    formulaBuilder(
       (
         f1: P_Formula,
         f2: P_Formula
       ) => (
         error: Option[Error]
-      ) => new P_FormulaBiconditional(f1, f2, error): Formula
+      ) => P_FormulaBiconditional(f1, f2, error): Formula
     )
 
   val formulaImplication =
-    parseStuff.formulaBuilder(
+    formulaBuilder(
       (
         f1: P_Formula,
         f2: P_Formula
       ) => (
         error: Option[Error]
-      ) => new P_FormulaImplication(f1, f2, error): Formula
+      ) => P_FormulaImplication(f1, f2, error): Formula
     )
 
   val formulaDisjunction =
-    parseStuff.formulaBuilder(
+    formulaBuilder(
       (
         f1: P_Formula,
         f2: P_Formula
       ) => (
         error: Option[Error]
-      ) => new P_FormulaDisjunction(f1, f2, error): Formula
+      ) => P_FormulaDisjunction(f1, f2, error): Formula
     )
 
   val formulaConjunction =
-    parseStuff.formulaBuilder(
+    formulaBuilder(
       (
         f1: P_Formula,
         f2: P_Formula
       ) => (
         error: Option[Error]
-      ) => new P_FormulaConjunction(f1, f2, error): Formula
+      ) => P_FormulaConjunction(f1, f2, error): Formula
     )
 
   val formulaProposition =
-    parseStuff.formulaBuilder(
+    formulaBuilder(
       (
         p: P_Proposition
       ) => (
         error: Option[Error]
-      ) => new P_FormulaProposition(p, error): Formula
+      ) => P_FormulaProposition(p, error): Formula
+    )
+
+  val formulaAxiomatization =
+    FormulaBuilder(
+      (
+        a: P_Axiomatization
+      ) => (
+        error: Option[Error]
+      ) => P_SFormulaAxiomatization(a): SFormula
     )
 
   val formulaApplication =
-    parseStuff.formulaBuilder(
+    formulaBuilder(
       (
         p: P_Predicate,
         a: P_Applicand
       ) => (
         error: Option[Error]
-      ) => new P_FormulaApplication(p, a, error): Formula
+      ) => P_FormulaApplication(p, a, error): Formula
     )
 
   val formulaNegation =
-    parseStuff.formulaBuilder(
+    formulaBuilder(
       (
         f1: P_Formula
       ) => (
         error: Option[Error]
-      ) => new P_FormulaNegation(f1, error): Formula
+      ) => P_FormulaNegation(f1, error): Formula
     )
 
   val formulaQuantification =
-    parseStuff.formulaBuilder(
+    formulaBuilder(
       (
         q: QuantificationKind.Kind,
         v: P_VarName,
         f1: P_Formula
       ) => (
         error: Option[Error]
-      ) => new P_FormulaQuantification(q, v, f1 , error): Formula
+      ) => P_FormulaQuantification(q, v, f1 , error): Formula
     )
 
 // ====================================================================
 
   val termApplication =
-    parseStuff.formulaBuilder(
+    formulaBuilder(
       (
         f: P_Function,
         a: P_Applicand
       ) => (
         error: Option[Error]
-      ) => new P_TermApplication(f, a, error): Term
+      ) => P_TermApplication(f, a, error): Term
     )
 
   val termVariable =
-    parseStuff.formulaBuilder(
+    formulaBuilder(
       (
         v: P_VarName
       ) => (
         error: Option[Error]
-      ) => new P_TermVariable(v, error): Term
+      ) => P_TermVariable(v, error): Term
     )
 */
 
@@ -496,7 +505,7 @@ package object formulaBuilder {
         f1: P_Formula
       ) => (
         error: Option[Error]
-      ) => P_FormulaQuantification(q, v, f1 , error): Formula
+      ) => P_FormulaQuantification.construct(q, v, f1, error): Formula
     )
 
 // ====================================================================

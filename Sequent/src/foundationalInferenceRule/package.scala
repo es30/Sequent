@@ -19,8 +19,8 @@ package object foundationalInferenceRule {
   import p_sequent.Cedent
   import p_sequent.Cedent.CedentTemplate
   import sequent._
-  import substitution.substitute._
   import substitution.checkOccurs._
+  import substitution.substitute._
 
   import inferenceRuleWrapper._
 
@@ -28,17 +28,17 @@ package object foundationalInferenceRule {
 // ====================================================================
 
 
-  def zz_Error_subst(x: Option[Error]): OError = x
+  private def zz_Error_subst(x: Option[Error]): OError = x
 
 
-  def zz_Error_axiom(x: Option[(Cedent, P_SFormulaAxiomatization)]): OError =
+  private def zz_Error_axiom(x: Option[(Cedent, P_SFormulaAxiomatization)]): OError =
     x match {
       case Some((c, f_axiom)) => Some(new Error_axiom(c, f_axiom))
       case None => None
     }
 
 
-  def zz_Error_subsm(x: Option[(P_SFormulaAxiomatization, P_Formula)]): OError =
+  private def zz_Error_subsm(x: Option[(P_SFormulaAxiomatization, P_Formula)]): OError =
     x match {
       case Some((f, f_subsm)) => Some(new Error_subsm(f, f_subsm))
       case None => None
@@ -48,12 +48,12 @@ package object foundationalInferenceRule {
 // ====================================================================
 
 
-  type Rxxx = (CedentTemplate, CedentTemplate, Seq[OError])
+  private type Rxxx = (CedentTemplate, CedentTemplate, Seq[OError])
 
 
   import shapeless.ops.function.{FnFromProduct, FnToProduct}
 
-  def foundationalInferenceRule[Ta <: HList, T <: HList, F](name: String, f: F)
+  private def foundationalInferenceRule[Ta <: HList, T <: HList, F](name: String, f: F)
     (implicit
       ftp: FnToProduct.Aux[F, T => Rxxx],
       vet: VetApplicand[Ta, T],
@@ -95,10 +95,13 @@ package object foundationalInferenceRule {
 // ====================================================================
 
 
-  def inferenceRuleAxiom =
+  //  ------ (I)
+  //  A ⊢ A
+
+  val inferenceRuleAxiom =
     foundationalInferenceRule("I",
       (
-        f: P_Formula
+        f: P_Formula                    //  A
       ) => {
         val fa = f
         val  a = CTESFormula(fa)
@@ -110,11 +113,15 @@ package object foundationalInferenceRule {
     )
 
 
-  def inferenceRuleCut =
+  //  Γ ⊢ Δ, A    A, Σ ⊢ Π
+  //  -------------------- (Cut)
+  //  Γ, Σ ⊢ Δ, Π
+
+  val inferenceRuleCut =
     foundationalInferenceRule("Cut",
       (
-        s: P_SeqPair,
-        f: P_Formula
+        s: P_SeqPair,                   //  (Γ ⊢ Δ, A; A, Σ ⊢ Π)
+        f: P_Formula                    //  A
       ) => {
         val (sL, sR) = s
         val fa = f
@@ -134,14 +141,17 @@ package object foundationalInferenceRule {
     )
 
 
-  def inferenceRuleAndL1 =
-    foundationalInferenceRule("∧L1",
+  //  Γ, A ⊢ Δ
+  //  ---------- (∧L₁)
+  //  Γ, A∧B ⊢ Δ
+
+  val inferenceRuleAndL1 =
+    foundationalInferenceRule("∧L₁",
       (
-        s: P_Sequent,
-        f: P_FormPair
+        s: P_Sequent,                   //  Γ, A ⊢ Δ
+        f: P_FormPair                   //  (A, B)
       ) => {
-        val fa = f._1
-        val fb = f._2
+        val (fa, fb) = f
 //      val  a = CTESFormula(fa)
 //      val  b = CTESFormula(fb)
         val ab = CTESFormula(P_FormulaConjunction(fa, fb))
@@ -157,11 +167,15 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ ⊢ A, Δ
+  //  ---------- (∨R₁)
+  //  Γ ⊢ A∨B, Δ
+
   val inferenceRuleOrR1 =
-    foundationalInferenceRule("∨R1",
+    foundationalInferenceRule("∨R₁",
       (
-        s: P_Sequent,
-        f: P_FormPair
+        s: P_Sequent,                   //  Γ ⊢ A, Δ
+        f: P_FormPair                   //  (A, B)
       ) => {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
@@ -179,11 +193,15 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ, B ⊢ Δ
+  //  ---------- (∧L₂)
+  //  Γ, A∧B ⊢ Δ
+
   val inferenceRuleAndL2 =
-    foundationalInferenceRule("∧L2",
+    foundationalInferenceRule("∧L₂",
       (
-        s: P_Sequent,
-        f: P_FormPair
+        s: P_Sequent,                   //  Γ, B ⊢ Δ
+        f: P_FormPair                   //  (A, B)
       ) => {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
@@ -201,11 +219,15 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ ⊢ B, Δ
+  //  ---------- (∨R₂)
+  //  Γ ⊢ A∨B, Δ
+
   val inferenceRuleOrR2 =
-    foundationalInferenceRule("∨R2",
+    foundationalInferenceRule("∨R₂",
       (
-        s: P_Sequent,
-        f: P_FormPair
+        s: P_Sequent,                   //  Γ ⊢ B, Δ
+        f: P_FormPair                   //  (A, B)
       ) => {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
@@ -223,11 +245,15 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ, A ⊢ Δ    Σ, B ⊢ Π
+  //  -------------------- (∨L)
+  //  Γ, Σ, A∨B ⊢ Δ, Π
+
   val inferenceRuleOrL =
     foundationalInferenceRule("∨L",
       (
-        s: P_SeqPair,
-        f: P_FormPair
+        s: P_SeqPair,                   //  (Γ, A ⊢ Δ; Σ, B ⊢ Π)
+        f: P_FormPair                   //  (A, B)
       ) => {
         val (sL, sR) = s
         val (fa, fb) = f
@@ -249,11 +275,15 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ ⊢ A, Δ    Σ ⊢ B, Π
+  //  -------------------- (∧R)
+  //  Γ, Σ ⊢ A∧B, Δ, Π
+
   val inferenceRuleAndR =
     foundationalInferenceRule("∧R",
       (
-        s: P_SeqPair,
-        f: P_FormPair
+        s: P_SeqPair,                   //  (Γ ⊢ A, Δ; Σ ⊢ B, Π)
+        f: P_FormPair                   //  (A, B)
       ) => {
         val (sL, sR) = s
         val (fa, fb) = f
@@ -275,11 +305,15 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ ⊢ A, Δ    Σ, B ⊢ Π
+  //  -------------------- (→L)
+  //  Γ, Σ, A → B ⊢ Δ, Π
+
   val inferenceRuleImplL =
     foundationalInferenceRule("→L",
       (
-        s: P_SeqPair,
-        f: P_FormPair
+        s: P_SeqPair,                   //  (Γ ⊢ A, Δ; Σ, B ⊢ Π)
+        f: P_FormPair                   //  (A, B)
       ) => {
         val (sL, sR) = s
         val (fa, fb) = f
@@ -301,11 +335,15 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ, A ⊢ B, Δ
+  //  ----------- (→R)
+  //  Γ ⊢ A → B, Δ
+
   val inferenceRuleImplR =
     foundationalInferenceRule("→R",
       (
-        s: P_Sequent,
-        f: P_FormPair
+        s: P_Sequent,                   //  Γ, A ⊢ B, Δ
+        f: P_FormPair                   //  (A, B)
       ) => {
         val (fa, fb) = f
 //      val  a = CTESFormula(fa)
@@ -324,11 +362,15 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ ⊢ A, Δ
+  //  --------- (¬L)
+  //  Γ, ¬A ⊢ Δ
+
   val inferenceRuleNotL =
     foundationalInferenceRule("¬L",
       (
-        s: P_Sequent,
-        f: P_Formula
+        s: P_Sequent,                   //  Γ ⊢ A, Δ
+        f: P_Formula                    //  A
       ) => {
         val fa = f
 //      val  a = CTESFormula(fa)
@@ -345,11 +387,15 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ, A ⊢ Δ
+  //  --------- (¬R)
+  //  Γ ⊢ ¬A, Δ
+
   val inferenceRuleNotR =
     foundationalInferenceRule("¬R",
       (
-        s: P_Sequent,
-        f: P_Formula
+        s: P_Sequent,                   //  Γ, A ⊢ Δ
+        f: P_Formula                    //  A
       ) => {
         val fa = f
 //      val  a = CTESFormula(fa)
@@ -366,18 +412,22 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ, A[t/x] ⊢ Δ
+  //  ------------- (∀L)
+  //  Γ, ∀xA ⊢ Δ
+
   val inferenceRuleUnivL =
     foundationalInferenceRule("∀L",
       (
-        s: P_Sequent,
-        f: P_Formula,
-        subst: (P_Term, P_VarName)
+        s: P_Sequent,                       //  Γ, A[t/x] ⊢ Δ
+        f: P_Formula,                       //  A
+        subst: (P_Term, P_VarName)          //  (t, x)
       ) => {
         val fa = f
 //      val  a = CTESFormula(fa)
         val (t, x) = subst
         val (faSubst, error_subst) = fa.substitute(t, x)
-        val qa = CTESFormula(P_FormulaQuantification(QuantificationKind.Universal, x, fa))
+        val qa = CTESFormula(P_FormulaQuantificationUniversal(x, fa))
         val (gamma,   error_ante) = s .ante - faSubst
         val  delta      = CTECedent(s .succ          )
         (
@@ -391,18 +441,22 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ ⊢ A[y/x], Δ
+  //  ------------- (∀R)
+  //  Γ ⊢ ∀xA, Δ
+
   val inferenceRuleUnivR =
     foundationalInferenceRule("∀R",
       (
-        s: P_Sequent,
-        f: P_Formula,
-        subst: (P_VarName, P_VarName)
+        s: P_Sequent,                   //  Γ ⊢ A[y/x], Δ
+        f: P_Formula,                   //  A
+        subst: (P_VarName, P_VarName)   //  (y, x)
       ) => {
         val fa = f
 //      val  a = CTESFormula(fa)
         val (y, x) = subst
         val (faSubst, error_subst) = fa.substitute(y, x)
-        val qa = CTESFormula(P_FormulaQuantification(QuantificationKind.Universal, x, fa))
+        val qa = CTESFormula(P_FormulaQuantificationUniversal(x, fa))
         val  cgamm                = s .ante
         val (cdelt,   error_succ) = s .succ -- faSubst
         val  gamma = CTECedent(cgamm)
@@ -422,18 +476,22 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ, A[y/x] ⊢ Δ
+  //  ------------- (∃L)
+  //  Γ, ∃xA ⊢ Δ
+
   val inferenceRuleExistL =
     foundationalInferenceRule("∃L",
       (
-        s: P_Sequent,
-        f: P_Formula,
-        subst: (P_VarName, P_VarName)
+        s: P_Sequent,                   //  Γ, A[y/x] ⊢ Δ
+        f: P_Formula,                   //  A
+        subst: (P_VarName, P_VarName)   //  (y, x)
       ) => {
         val fa = f
 //      val  a = CTESFormula(fa)
         val (y, x) = subst
         val (faSubst, error_subst) = fa.substitute(y, x)
-        val qa = CTESFormula(P_FormulaQuantification(QuantificationKind.Existential, x, fa))
+        val qa = CTESFormula(P_FormulaQuantificationExistential(x, fa))
         val (cgamm,   error_ante) = s .ante -- faSubst
         val  cdelt                = s .succ
         val  gamma = CTECedent(cgamm)
@@ -453,18 +511,22 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ ⊢ A[t/x], Δ
+  //  ------------- (∃R)
+  //  Γ ⊢ ∃xA, Δ
+
   val inferenceRuleExistR =
     foundationalInferenceRule("∃R",
       (
-        s: P_Sequent,
-        f: P_Formula,
-        subst: (P_Term, P_VarName)
+        s: P_Sequent,                   //  Γ ⊢ A[t/x], Δ
+        f: P_Formula,                   //  A
+        subst: (P_Term, P_VarName)      //  (t, x)
       ) => {
         val fa = f
 //      val  a = CTESFormula(fa)
         val (t, x) = subst
         val (faSubst, error_subst) = fa.substitute(t, x)
-        val qa = CTESFormula(P_FormulaQuantification(QuantificationKind.Existential, x, fa))
+        val qa = CTESFormula(P_FormulaQuantificationExistential(x, fa))
         val  gamma      = CTECedent(s .ante          )
         val (delta,   error_succ) = s .succ - faSubst
         (
@@ -478,12 +540,18 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ ⊢ Δ
+  //  -------- (WL)
+  //  Γ, A ⊢ Δ
+  //
+  //  This is the one and only place where
+  //  axiomatizations can be introduced.
+
   val inferenceRuleWeakenL =
     foundationalInferenceRule("WL",
       (
-        s: P_Sequent,
-        f: P_SFormula     //  This is the one and only place where
-                          //  axiomatizations can be introduced.
+        s: P_Sequent,                   //  Γ ⊢ Δ
+        f: P_SFormula                   //  A
       ) => {
         val fa = f
         val  a = CTESFormula(fa)
@@ -497,11 +565,15 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ ⊢ Δ
+  //  -------- (WR)
+  //  Γ ⊢ A, Δ
+
   val inferenceRuleWeakenR =
     foundationalInferenceRule("WR",
       (
-        s: P_Sequent,
-        f: P_Formula
+        s: P_Sequent,                   //  Γ ⊢ Δ
+        f: P_Formula                    //  A
       ) => {
         val fa = f
         val  a = CTESFormula(fa)
@@ -515,12 +587,16 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ, Theory, A ⊢ Δ
+  //  ---------------- (WR)
+  //  Γ, Theory ⊢ Δ
+
   val inferenceRuleContractL =
     foundationalInferenceRule("CL",
       (
-        s: P_Sequent,
-        a: P_SFormulaAxiomatization,
-        f: P_Formula
+        s: P_Sequent,                   //  Γ, Theory, A ⊢ Δ
+        a: P_SFormulaAxiomatization,    //  Theory
+        f: P_Formula                    //  A
       ) => {
         val     error_axiom = s .ante.contains(a)
         val     error_subsm = a.checkSubsumption(f)

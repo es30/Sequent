@@ -1003,7 +1003,7 @@ public class ParseStuffParser extends Parser {
 	}
 
 	public static class Quantified_variableContext extends ParserRuleContext {
-		public scala.Tuple2<scala.Enumeration.Value,String> q;
+		public scala.Enumeration.Value q;
 		public VariableContext variable() {
 			return getRuleContext(VariableContext.class,0);
 		}
@@ -1100,7 +1100,7 @@ public class ParseStuffParser extends Parser {
 			setState(146);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
-			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+			while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
@@ -1166,7 +1166,7 @@ public class ParseStuffParser extends Parser {
 			setState(154);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
-			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+			while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
