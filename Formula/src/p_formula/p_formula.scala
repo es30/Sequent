@@ -301,7 +301,7 @@ case class P_FormulaBiconditional (f1: P_Formula, f2: P_Formula, override val er
     extends P_Formula with P_FormulaDyadic {
   override def formulaString() = super[P_FormulaDyadic].formulaString
   val kind = DyadicKind.Biconditional
-  val connective = "→"
+  val connective = "↔"
   def replace(f1: P_Formula, f2: P_Formula) = copy(f1 = f1, f2 = f2)
 }
 

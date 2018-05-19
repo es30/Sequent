@@ -1,4 +1,4 @@
-// Generated from C:/Users/EdSnow/IdeaProjects/Sequent/FrontEnd/src/parseStuff\ParseStuff.g4 by ANTLR 4.6
+// Generated from C:/Users/EdSnow/IdeaProjects/Sequent/FrontEnd/src/parseStuff\ParseStuff.g4 by ANTLR 4.7
 package parseStuff;
 
 //  from Term.g4

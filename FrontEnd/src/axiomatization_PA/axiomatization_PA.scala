@@ -36,7 +36,7 @@ private object closureChecker {
       ): TailRec[Boolean] =
       formula match {
 
-        case ap: P_FormulaProposition =>
+        case _: P_FormulaProposition =>
           tailcall(isClosed_continue(continuation, true))
 
         case aa: P_FormulaApplication =>

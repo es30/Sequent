@@ -89,6 +89,8 @@ relation returns [Formula f] locals [p_formula.P_Predicate p]
         (
                 '\u2208'        {$p=parseStuff.package$.MODULE$.predicateIsElementOf();}
                                 //  ∈  is element of
+            |   '\u2286'        {$p=parseStuff.package$.MODULE$.predicateIsSubsetOfOrEqualTo();}
+                                //  ⊆  is subset of or equal to
             |	'='             {$p=parseStuff.package$.MODULE$.predicateIsEqualTo();}
                                 //  =  is equal to
             |	'\u2260'        {$p=parseStuff.package$.MODULE$.predicateIsNotEqualTo();}
@@ -142,6 +144,7 @@ particle returns [Term t]
     |   term_variable           # Particle_type_variable
 	|	function_application    # Particle_type_application
 	|   successor_application   # Particle_type_successor
+//  |   Empty_set
 	|   Zero                    # Particle_type_zero
 //	|   Natural_numbers_origin_zero
 //	|   Natural_numbers_origin_one
@@ -190,11 +193,13 @@ Negation_connective
 
 Conditional_connective
     :   '\u2192'                //  →  implies
+    |   '\u21D2'                //  ⇒  implies
     |   '->'
 ;
 
 Biconditional_connective
     :   '\u2194'                //  ↔  if and only if
+    |   '\u21D4'                //  ⇔  if and only if
     |   '<->'
 ;
 
@@ -214,6 +219,14 @@ Whitespace
 	:	[ \t\r\n\uFEFF]+ -> skip
 ;                               //  includes the BOM for UTF-8
 
+Union_operator
+    :   '\u222A'                //  ∪  union of
+;
+
+Intersection_operator
+    :   '\u2229'                //  ∩  intersection of
+;
+
 Successor_operator
     :   '/S'                    //  S  successor of
 ;
@@ -225,6 +238,10 @@ Addition_operator
 Multiplication_operator
     :   '\u00D7'                //  ×  product of
     |   '*'
+;
+
+Empty_set
+    :   '\u2205'                //  ∅  empty set
 ;
 
 Zero

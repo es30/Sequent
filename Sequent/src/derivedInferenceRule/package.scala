@@ -72,22 +72,8 @@ package object derivedInferenceRule {
 
 
   //  Γ, A ⊢ B, Δ
-  //  -----------
+  //  ----------- (→R)
   //  Γ ⊢ A → B, Δ
-
-  val inferenceRuleRool1a =
-    derivedInferenceRule("Rool1a",
-      (
-        s: P_Sequent,                   //  Γ, A ⊢ B, Δ
-        f: P_FormPair                   //  (A, B)
-      ) => {
-        val s1 = s                  //  must conform to Γ, A ⊢ B, Δ
-        val (a, b) = f                              //  (A, B)
-
-        val s001 = inferenceRuleImplR(s1, (a, b))   //  A, A → B ⊢ B, Δ
-        s001
-      }
-    )
 
 
   //  Γ ⊢ A → B, Δ
@@ -111,6 +97,272 @@ package object derivedInferenceRule {
         val s004 = inferenceRuleCut((s1, s003), f001)
                                                     //  Γ, A ⊢ B, Δ
         s004
+      }
+    )
+
+
+  //  -----------
+  //  A → B, A ⊢ B
+
+  val inferenceRuleRool1cc1 =
+    derivedInferenceRule("Rool1cc1",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val f001 = P_FormulaImplication(a, b)       //  A → B
+        val s001 = inferenceRuleAxiom(f001)         //  A → B ⊢ A → B
+        val s002 = inferenceRuleRool1b(s001, (a, b))
+                                                    //  A → B, A ⊢ B
+        s002
+      }
+    )
+
+
+  //  ------------
+  //  A → B ⊢ ¬A∨B
+
+  val inferenceRuleRool1cc =
+    derivedInferenceRule("Rool1cc",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val f001 = P_FormulaNegation(a)             //  ¬A
+        val s001 = inferenceRuleRool1cc1(a, b)      //  A → B, A ⊢ B
+        val s002 = inferenceRuleNotR(s001, a)       //  A → B ⊢ ¬A, B
+        val s003 = inferenceRuleOrR1(s002, (f001, b))
+                                                    //  A → B ⊢ ¬A∨B, B
+        val s004 = inferenceRuleOrR2(s003, (f001, b))
+                                                    //  A → B ⊢ ¬A∨B, ¬A∨B
+                                                    //  =>  A → B ⊢ ¬A∨B
+        s004
+      }
+    )
+
+
+  //  ------------
+  //  ¬A∨B ⊢ A → B
+
+  val inferenceRuleRool1dd =
+    derivedInferenceRule("Rool1dd",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val f001 = P_FormulaNegation(a)             //  ¬A
+        val s001 = inferenceRuleAxiom(a)            //  A ⊢ A
+        val s002 = inferenceRuleAxiom(b)            //  B ⊢ B
+        val s003 = inferenceRuleNotL(s001, a)       //  A, ¬A ⊢
+        val s004 = inferenceRuleOrL((s003, s002), (f001, b))
+                                                    //  A, ¬A∨B ⊢ B
+        val s005 = inferenceRuleImplR(s004, (a, b))
+                                                    //  ¬A∨B ⊢ A → B
+        s005
+      }
+    )
+
+
+  //  ---------------------
+  //  (A → B)∧(B → C) ⊢ A → C
+
+  val inferenceRuleRool1eeYYY =
+    derivedInferenceRule("Rool1ee",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula,                   //  B
+        c: P_Formula                    //  C
+      ) => {
+        val f001 = P_FormulaImplication(a, b)       //  A → B
+        val f002 = P_FormulaImplication(b, c)       //  B → C
+        val s001 = inferenceRuleRool1cc1(a, b)      //  A → B, A ⊢ B
+        val s002 = inferenceRuleRool1cc1(b, c)      //  B → C, B ⊢ C
+        val s003 = inferenceRuleCut((s001, s002), b)
+                                                    //  A → B, A, B → C ⊢ C
+        val s004 = inferenceRuleImplR(s003, (a, c)) //  A → B, B → C ⊢ A → C
+        val s005 = inferenceRuleAndL1(s004, (f001, f002))
+                                                    //  B → C, (A → B)∧(B → C) ⊢ A → C
+        val s006 = inferenceRuleAndL2(s005, (f001, f002))
+                                                    //  (A → B)∧(B → C), (A → B)∧(B → C) ⊢ A → C
+                                                    //  =>  (A → B)∧(B → C) ⊢ A → C
+        s006
+      }
+    )
+
+
+  //  ------------
+  //  A ↔ B ⊢ A → B
+
+  val inferenceRuleRool1ddx =
+    derivedInferenceRule("Rool1ddx",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val s001 = inferenceRuleAxiom(a)            //  A ⊢ A
+        val s002 = inferenceRuleAxiom(b)            //  B ⊢ B
+        val s003 = inferenceRuleBicondL1((s001, s002), (a, b))
+                                                    //  A, A ↔ B ⊢ B
+        val s004 = inferenceRuleImplR(s003, (a, b))
+                                                    //  A ↔ B ⊢ A → B
+        s004
+      }
+    )
+
+
+  //  ------------
+  //  A ↔ B ⊢ B → A
+
+  val inferenceRuleRool1ddy =
+    derivedInferenceRule("Rool1ddy",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val s001 = inferenceRuleAxiom(a)            //  A ⊢ A
+        val s002 = inferenceRuleAxiom(b)            //  B ⊢ B
+        val s003 = inferenceRuleBicondL2((s001, s002), (a, b))
+                                                    //  B, A ↔ B ⊢ A
+        val s004 = inferenceRuleImplR(s003, (b, a))
+                                                    //  A ↔ B ⊢ B → A
+        s004
+      }
+    )
+
+
+  //  ---------------------
+  //  A ↔ B ⊢ (A → B)∧(B → A)
+
+  val inferenceRuleRool1ddxy =
+    derivedInferenceRule("Rool1ddxy",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val f001 = P_FormulaImplication(a, b)       //  A → B
+        val f002 = P_FormulaImplication(b, a)       //  B → A
+        val s001 = inferenceRuleAxiom(a)            //  A ⊢ A
+        val s002 = inferenceRuleAxiom(b)            //  B ⊢ B
+        val s003 = inferenceRuleBicondL1((s001, s002), (a, b))
+                                                    //  A, A ↔ B ⊢ B
+        val s004 = inferenceRuleBicondL2((s001, s002), (a, b))
+                                                    //  B, A ↔ B ⊢ A
+        val s005 = inferenceRuleImplR(s003, (a, b))
+                                                    //  A ↔ B ⊢ A → B
+        val s006 = inferenceRuleImplR(s004, (b, a))
+                                                    //  A ↔ B ⊢ B → A
+        val s007 = inferenceRuleAndR((s005, s006), (f001, f002))
+                                                    //  A ↔ B, A ↔ B ⊢ (A → B)∧(B → A)
+                                                    //  =>  A ↔ B ⊢ (A → B)∧(B → A)
+        s007
+      }
+    )
+
+
+  //  ------------
+  //  A ↔ B ⊢ B ↔ A
+
+  val inferenceRuleRool1ddz =
+    derivedInferenceRule("Rool1ddz",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val s001 = inferenceRuleAxiom(a)            //  A ⊢ A
+        val s002 = inferenceRuleAxiom(b)            //  B ⊢ B
+        val s003 = inferenceRuleBicondL1((s001, s002), (a, b))
+                                                    //  A, A ↔ B ⊢ B
+        val s004 = inferenceRuleBicondL2((s001, s002), (a, b))
+                                                    //  B, A ↔ B ⊢ A
+        val s005 = inferenceRuleBicondR((s004, s003), (b, a))
+                                                    //  A ↔ B, A ↔ B ⊢ B ↔ A
+                                                    //  =>  A ↔ B ⊢ B ↔ A
+        s005
+      }
+    )
+
+
+  //  ---------------------
+  //  (A → B)∧(B → A) ⊢ A ↔ B
+
+  val inferenceRuleRool1ee =
+    derivedInferenceRule("Rool1ee",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val f001 = P_FormulaImplication(a, b)       //  A → B
+        val f002 = P_FormulaImplication(b, a)       //  B → A
+        val s001 = inferenceRuleAxiom(f001)         //  A → B ⊢ A → B
+        val s002 = inferenceRuleAxiom(f002)         //  B → A ⊢ B → A
+        val s003 = inferenceRuleRool1b(s001, (a, b))
+                                                    //  A → B, A ⊢ B
+        val s004 = inferenceRuleRool1b(s002, (b, a))
+                                                    //  B → A, B ⊢ A
+        val s005 = inferenceRuleBicondR((s003, s004), (a, b))
+                                                    //  A → B, B → A ⊢ A ↔ B
+        val s006 = inferenceRuleAndL1(s005, (f001, f002))
+                                                    //  B → A, (A → B)∧(B → A) ⊢ A ↔ B
+        val s007 = inferenceRuleAndL2(s006, (f001, f002))
+                                                    //  (A → B)∧(B → A), (A → B)∧(B → A) ⊢ A ↔ B
+                                                    //  =>  (A → B)∧(B → A) ⊢ A ↔ B
+        s007
+      }
+    )
+
+
+  //  ---------------------
+  //  (A ↔ B)∧(B ↔ C) ⊢ A ↔ C
+
+  val inferenceRuleRool1eeZZZ =
+    derivedInferenceRule("Rool1ee",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula,                   //  B
+        c: P_Formula                    //  C
+      ) => {
+        val f001 = P_FormulaImplication(a, b)       //  A → B
+        val f002 = P_FormulaImplication(b, c)       //  B → C
+        val f003 = P_FormulaConjunction(f001, f002) //  (A → B)∧(B → C)
+        val f004 = P_FormulaBiconditional(a, b)     //  A ↔ B
+        val f005 = P_FormulaBiconditional(b, c)     //  B ↔ C
+        val f006 = P_FormulaImplication(c, b)       //  C → B
+        val f007 = P_FormulaImplication(b, a)       //  B → A
+        val f008 = P_FormulaConjunction(f006, f007) //  (C → B)∧(B → A)
+        val f009 = P_FormulaImplication(a, c)       //  A → C
+        val f010 = P_FormulaImplication(c, a)       //  C → A
+        val f011 = P_FormulaConjunction(f009, f010) //  (A → C)∧(C → A)
+        val s001 = inferenceRuleRool1ddx(a, b)      //  A ↔ B ⊢ A → B
+        val s002 = inferenceRuleRool1ddx(b, c)      //  B ↔ C ⊢ B → C
+        val s003 = inferenceRuleAndR((s001, s002), (f001, f002))
+                                                    //  A ↔ B, B ↔ C ⊢ (A → B)∧(B → C)
+        val s004 = inferenceRuleRool1eeYYY(a, b, c) //  (A → B)∧(B → C) ⊢ A → C
+        val s005 = inferenceRuleCut((s003, s004), f003)
+                                                    //  A ↔ B, B ↔ C ⊢ A → C
+        val s006 = inferenceRuleAndL1(s005, (f004, f005))
+                                                    //  B ↔ C, (A ↔ B)∧(B ↔ C) ⊢ A → C
+        val s007 = inferenceRuleAndL2(s006, (f004, f005))
+                                                    //  (A ↔ B)∧(B ↔ C), (A ↔ B)∧(B ↔ C) ⊢ A → C
+                                                    //  =>  (A ↔ B)∧(B ↔ C) ⊢ A → C
+        val s008 = inferenceRuleRool1ddy(b, c)      //  B ↔ C ⊢ C → B
+        val s009 = inferenceRuleRool1ddy(a, b)      //  A ↔ B ⊢ B → A
+        val s010 = inferenceRuleAndR((s008, s009), (f006, f007))
+                                                    //  B ↔ C, A ↔ B ⊢ (C → B)∧(B → A)
+        val s011 = inferenceRuleRool1eeYYY(c, b, a) //  (C → B)∧(B → A) ⊢ C → A
+        val s012 = inferenceRuleCut((s010, s011), f008)
+                                                    //  B ↔ C, A ↔ B ⊢ C → A
+        val s013 = inferenceRuleAndL1(s012, (f004, f005))
+                                                    //  B ↔ C, (A ↔ B)∧(B ↔ C) ⊢ C → A
+        val s014 = inferenceRuleAndL2(s013, (f004, f005))
+                                                    //  (A ↔ B)∧(B ↔ C), (A ↔ B)∧(B ↔ C) ⊢ C → A
+                                                    //  =>  (A ↔ B)∧(B ↔ C) ⊢ C → A
+        val s015 = inferenceRuleAndR((s007, s014), (f009, f010))
+                                                    //  (A ↔ B)∧(B ↔ C), (A ↔ B)∧(B ↔ C) ⊢ (A → C)∧(C → A)
+                                                    //  =>  (A ↔ B)∧(B ↔ C) ⊢ (A → C)∧(C → A)
+        val s016 = inferenceRuleRool1ee(a, c)       //  (A → C)∧(C → A) ⊢ A ↔ C
+        val s017 = inferenceRuleCut((s015, s016), f011)
+                                                    //  (A ↔ B)∧(B ↔ C) ⊢ A ↔ C
+        s017
       }
     )
 
@@ -320,6 +572,118 @@ package object derivedInferenceRule {
         val s009 = inferenceRuleOrR2(s008, (f001, c))
                                                     //  A∨(B∨C) ⊢ (A∨B)∨C
         s009
+      }
+    )
+
+
+  //  ---------------
+  //  ¬(A∧B) ⊢ ¬A∨¬B
+
+  val inferenceRuleDeMorgan1A =
+    derivedInferenceRule("DeMorgan1A",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val f001 = P_FormulaNegation(a)             //  ¬A
+        val f002 = P_FormulaNegation(b)             //  ¬B
+        val f003 = P_FormulaConjunction(a, b)       //  A∧B
+        val s001 = inferenceRuleAxiom(a)            //  A ⊢ A
+        val s002 = inferenceRuleNotR(s001, a)       //  ⊢ ¬A, A
+        val s003 = inferenceRuleOrR1(s002, (f001, f002))
+                                                    //  ⊢ ¬A∨¬B, A
+        val s004 = inferenceRuleAxiom(b)            //  B ⊢ B
+        val s005 = inferenceRuleNotR(s004, b)       //  ⊢ ¬B, B
+        val s006 = inferenceRuleOrR2(s005, (f001, f002))
+                                                    //  ⊢ ¬A∨¬B, B
+        val s007 = inferenceRuleAndR((s003, s006), (a, b))
+                                                    //  ⊢ A∧B, ¬A∨¬B, ¬A∨¬B
+                                                    //  =>  ⊢ A∧B, ¬A∨¬B
+        val s008 = inferenceRuleNotL(s007, f003)    //  ⊢ ¬(A∧B) ⊢ ¬A∨¬B
+        s008
+      }
+    )
+
+
+  //  ---------------
+  //  ¬(A∨B) ⊢ ¬A∧¬B
+
+  val inferenceRuleDeMorgan2A =
+    derivedInferenceRule("DeMorgan2A",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val f001 = P_FormulaNegation(a)             //  ¬A
+        val f002 = P_FormulaNegation(b)             //  ¬B
+        val f003 = P_FormulaDisjunction(a, b)       //  A∨B
+        val s001 = inferenceRuleAxiom(a)            //  A ⊢ A
+        val s002 = inferenceRuleNotR(s001, a)       //  ⊢ ¬A, A
+        val s003 = inferenceRuleOrR1(s002, (a, b))  //  ⊢ A∨B, ¬A
+        val s004 = inferenceRuleAxiom(b)            //  B ⊢ B
+        val s005 = inferenceRuleNotR(s004, b)       //  ⊢ ¬B, B
+        val s006 = inferenceRuleOrR2(s005, (a, b))  //  ⊢ A∨B, ¬B
+        val s007 = inferenceRuleAndR((s003, s006), (f001, f002))
+                                                    //  ⊢ ¬A∧¬B, A∨B, A∨B
+                                                    //  =>  ⊢ ¬A∧¬B, A∨B
+        val s008 = inferenceRuleNotL(s007, f003)    //  ¬(A∨B) ⊢ ¬A∧¬B
+        s008
+      }
+    )
+
+
+  //  ---------------
+  //  ¬A∧¬B ⊢ ¬(A∨B)
+
+  val inferenceRuleDeMorgan2B =
+    derivedInferenceRule("DeMorgan2B",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val f001 = P_FormulaNegation(a)             //  ¬A
+        val f002 = P_FormulaNegation(b)             //  ¬B
+        val f003 = P_FormulaDisjunction(a, b)       //  A∨B
+        val s001 = inferenceRuleAxiom(a)            //  A ⊢ A
+        val s002 = inferenceRuleNotL(s001, a)       //  A, ¬A ⊢
+        val s003 = inferenceRuleAndL1(s002, (f001, f002))
+                                                    //  A, ¬A∧¬B ⊢
+        val s004 = inferenceRuleAxiom(b)            //  B ⊢ B
+        val s005 = inferenceRuleNotL(s004, b)       //  B, ¬B ⊢
+        val s006 = inferenceRuleAndL2(s005, (f001, f002))
+                                                    //  B, ¬A∧¬B ⊢
+        val s007 = inferenceRuleOrL((s003, s006), (a, b))
+                                                    //  ¬A∧¬B, ¬A∧¬B, A∨B ⊢
+                                                    //  =>  ¬A∧¬B, A∨B ⊢
+        val s008 = inferenceRuleNotR(s007, f003)    //  ¬A∧¬B ⊢ ¬(A∨B)
+        s008
+      }
+    )
+
+
+  //  ---------------
+  //  ¬A∨¬B ⊢ ¬(A∧B)
+
+  val inferenceRuleDeMorgan1B =
+    derivedInferenceRule("DeMorgan1B",
+      (
+        a: P_Formula,                   //  A
+        b: P_Formula                    //  B
+      ) => {
+        val f001 = P_FormulaNegation(a)             //  ¬A
+        val f002 = P_FormulaNegation(b)             //  ¬B
+        val f003 = P_FormulaConjunction(a, b)       //  A∧B
+        val s001 = inferenceRuleAxiom(a)            //  A ⊢ A
+        val s002 = inferenceRuleNotL(s001, a)       //  A, ¬A ⊢
+        val s003 = inferenceRuleAndL1(s002, (a, b)) //  ¬A, A∧B ⊢
+        val s004 = inferenceRuleAxiom(b)            //  B ⊢ B
+        val s005 = inferenceRuleNotL(s004, b)       //  B, ¬B ⊢
+        val s006 = inferenceRuleAndL2(s005, (a, b)) //  ¬B, A∧B ⊢
+        val s007 = inferenceRuleOrL((s003, s006), (f001, f002))
+                                                    //  A∧B, A∧B, ¬A∨¬B ⊢
+                                                    //  =>  A∧B, ¬A∨¬B ⊢
+        val s008 = inferenceRuleNotR(s007, f003)    //  ¬A∨¬B ⊢ ¬(A∧B)
+        s008
       }
     )
 
@@ -577,6 +941,52 @@ package object derivedInferenceRule {
         val s004 = inferenceRuleExistL(s003, a, substA)
                                                     //  Γ, ∃yA ⊢ ¬∀y¬B, Δ
         s004
+      }
+    )
+
+
+  //  Γ, A ⊢ C, Δ    Σ, B ⊢ D, Π
+  //  -------------------------
+  //  Γ, Σ, A∨B ⊢ C∨D, Δ, Π
+
+  val inferenceRuleRool8conj =
+    derivedInferenceRule("Rool8conj",
+      (
+        s: P_SeqPair,                   //  (Γ, A ⊢ C, Δ; Σ, B ⊢ D, Π)
+        f: P_FormQuadruple              //  (A, B, C, D)
+      ) => {
+        val (s1, s2) = s            //  must conform to Γ, A ⊢ C, Δ
+                                    //              and Σ, B ⊢ D, Π
+        val (a, b, c, d) = f                        //  (A, B, C, D)
+        val s001 = inferenceRuleAndL1(s1, (a, b))   //  Γ, A∧B ⊢ C, Δ
+        val s002 = inferenceRuleAndL2(s2, (a, b))   //  Σ, A∧B ⊢ D, Π
+        val s003 = inferenceRuleAndR((s001, s002), (c, d))
+                                                    //  Γ, Σ, A∧B, A∧B ⊢ C∧D, Δ, Π
+                                                    //  =>  Γ, Σ, A∧B ⊢ C∧D, Δ, Π
+        s003
+      }
+    )
+
+
+  //  Γ, A ⊢ C, Δ    Σ, B ⊢ D, Π
+  //  -------------------------
+  //  Γ, Σ, A∧B ⊢ C∧D, Δ, Π
+
+  val inferenceRuleRool8disj =
+    derivedInferenceRule("Rool8disj",
+      (
+        s: P_SeqPair,                   //  (Γ, A ⊢ C, Δ; Σ, B ⊢ D, Π)
+        f: P_FormQuadruple              //  (A, B, C, D)
+      ) => {
+        val (s1, s2) = s            //  must conform to Γ, A ⊢ C, Δ
+                                    //              and Σ, B ⊢ D, Π
+        val (a, b, c, d) = f                        //  (A, B, C, D)
+        val s001 = inferenceRuleOrR1(s1, (c, d))    //  Γ, A ⊢ C∨D, Δ
+        val s002 = inferenceRuleOrR2(s2, (c, d))    //  Σ, B ⊢ C∨D, Π
+        val s003 = inferenceRuleOrL((s001, s002), (a, b))
+                                                    //  Γ, Σ, A∨B ⊢ C∨D, C∨D, Δ, Π
+                                                    //  =>  Γ, Σ, A∨B ⊢ C∨D, Δ, Π
+        s003
       }
     )
 

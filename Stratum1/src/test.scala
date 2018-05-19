@@ -294,7 +294,7 @@ object test {
     val sequent001a1 = inferenceRuleAxiom(pf("C"))
     val sequent001a2 = inferenceRuleWeakenL(sequent001a1, pf("A"))
     val sequent001a3 = inferenceRuleWeakenR(sequent001a2, pf("B"))
-    val thm01a = inferenceRuleRool1a(sequent001a3, (pf("A"), pf("B")))
+    val thm01a = inferenceRuleImplR(sequent001a3, (pf("A"), pf("B")))
     thm01a.d
 
     //  Γ ⊢ A → B, Δ
@@ -304,6 +304,66 @@ object test {
     val sequent001b = inferenceRuleAxiom(pf("A -> B"))
     val thm01b = inferenceRuleRool1b(sequent001b, (pf("A"), pf("B")))
     thm01b.d
+
+    //  -----------
+    //  A → B, A ⊢ B
+
+    val thm01cc1 = inferenceRuleRool1cc1(pf("A"), pf("B"))
+    thm01cc1.d
+
+    //  ------------
+    //  A → B ⊢ ¬A∨B
+
+    val thm01cc = inferenceRuleRool1cc(pf("A"), pf("B"))
+    thm01cc.d
+
+    //  ------------
+    //  ¬A∨B ⊢ A → B
+
+    val thm01dd = inferenceRuleRool1dd(pf("A"), pf("B"))
+    thm01dd.d
+
+    //  ---------------------
+    //  (A → B)∧(B → C) ⊢ A → C
+
+    val thm01eeYYY = inferenceRuleRool1eeYYY(pf("A"), pf("B"), pf("C"))
+    thm01eeYYY.d
+
+    //  ------------
+    //  A ↔ B ⊢ A → B
+
+    val thm01ddx = inferenceRuleRool1ddx(pf("A"), pf("B"))
+    thm01ddx.d
+
+    //  ------------
+    //  A ↔ B ⊢ B → A
+
+    val thm01ddy = inferenceRuleRool1ddy(pf("A"), pf("B"))
+    thm01ddy.d
+
+    //  ---------------------
+    //  A ↔ B ⊢ (A → B)∧(B → A)
+
+    val thm01ddxy = inferenceRuleRool1ddxy(pf("A"), pf("B"))
+    thm01ddxy.d
+
+    //  ------------
+    //  A ↔ B ⊢ B ↔ A
+
+    val thm01ddz = inferenceRuleRool1ddz(pf("A"), pf("B"))
+    thm01ddz.d
+
+    //  ---------------------
+    //  (A → B)∧(B → A) ⊢ A ↔ B
+
+    val thm01ee = inferenceRuleRool1ee(pf("A"), pf("B"))
+    thm01ee.d
+
+    //  ---------------------
+    //  (A ↔ B)∧(B ↔ C) ⊢ A ↔ C
+
+    val thm01eeZZZ = inferenceRuleRool1eeZZZ(pf("A"), pf("B"), pf("C"))
+    thm01eeZZZ.d
 
     //  Γ, A∧B ⊢ C, Δ
     //  ---------------
@@ -357,9 +417,32 @@ object test {
     val thm01h = inferenceRuleRool1h(pf("A"), pf("B"), pf("C"))
     thm01h.d
 
+    //  ---------------
+    //  ¬(A∧B) ⊢ ¬A∨¬B
+
+    val thmDM1A = inferenceRuleDeMorgan1A(pf("A"), pf("B"))
+    thmDM1A.d
+
+    //  ---------------
+    //  ¬(A∨B) ⊢ ¬A∧¬B
+
+    val thmDM2A = inferenceRuleDeMorgan2A(pf("A"), pf("B"))
+    thmDM2A.d
+
+    //  ---------------
+    //  ¬A∧¬B ⊢ ¬(A∨B)
+
+    val thmDM2B = inferenceRuleDeMorgan2B(pf("A"), pf("B"))
+    thmDM2B.d
+
+    //  ---------------
+    //  ¬A∨¬B ⊢ ¬(A∧B)
+
+    val thmDM1B = inferenceRuleDeMorgan1B(pf("A"), pf("B"))
+    thmDM1B.d
+
     val sz01 = inferenceRuleAxiom(pf("A → B"))
     val sz02 = inferenceRuleRool1b(sz01, (pf("A"), pf("B")))
-    sz02.d
 
     //  Γ, A ⊢ B, Δ
     //  ----------------
@@ -462,7 +545,35 @@ object test {
       (pf("P(x)"), pf("¬P(x)")), (pt("x"), var_x))
     thmY0702.d
 
-    //  InferenceRuleReplace
+    //  inferenceRuleRool8conj, inferenceRuleRool8disj
+
+    println()
+    val fa = pf("A")
+    val fb = pf("B")
+    val fc = pf("C")
+    val fd = pf("D")
+    val thm08xaci = inferenceRuleAxiom(pf("A→C"))
+    val thm08xac  = inferenceRuleRool1b(thm08xaci, (fa, fc))
+    thm08xac.d
+    val thm08xbdi = inferenceRuleAxiom(pf("B→D"))
+    val thm08xbd  = inferenceRuleRool1b(thm08xbdi, (fb, fd))
+    thm08xbd.d
+
+    //  Γ, A ⊢ C, Δ    Σ, B ⊢ D, Π
+    //  -------------------------
+    //  Γ, Σ, A∨B ⊢ C∨D, Δ, Π
+
+    val thm08conj = inferenceRuleRool8conj((thm08xac, thm08xbd), (fa, fb, fc, fd))
+    thm08conj.d
+
+    //  Γ, A ⊢ C, Δ    Σ, B ⊢ D, Π
+    //  -------------------------
+    //  Γ, Σ, A∧B ⊢ C∧D, Δ, Π
+
+    val thm08disj = inferenceRuleRool8disj((thm08xac, thm08xbd), (fa, fb, fc, fd))
+    thm08disj.d
+
+    //  inferenceRuleReplace
 
     import tactics._
 
@@ -489,7 +600,7 @@ object test {
     println()
     val thmTTX501 = inferenceRuleAxiom(pf("f(0) = g(0)"))
     thmTTX501.d
-    val thmTTX502 = tacticReplaceTerm(thmTTX501, pf("f(0) = g(0)"),
+    val thmTTX502 = tacticReplaceTerm(thmTTX501, (pt("f(0)"), pt("g(0)")),
       (pf("P(h(0,0,f(0)))"), pf("P(h(0,0,g(0)))")))
     //thmTTX502.d
 
@@ -842,105 +953,6 @@ object test {
     thPA5.d
     thPA6.d
 
-    println
-    println("#### Block 9 test: Addition is associative")
-    println
-
-    println()
-    val th0001 = inferenceRuleAxiom(pf("∀x.(x + S(0) = S(x))"))
-    th0001.d
-
-    println()
-    println("  (3)")
-    val th0002 = inferenceRuleAxiom(pf("x + S(0) = S(x + 0)"))
-    th0002.d
-    val th0003 = inferenceRuleUnivL(th0002, pf("x + S(y) = S(x + y)"),
-      (pt("0"), var_y))
-    th0003.d
-    val th0004 = inferenceRuleUnivL(th0003, pf("∀y.(x + S(y) = S(x + y))"),
-      (pt("x"), var_x))
-    th0004.d
-    val th0005 = inferenceRuleCut((thPA4, th0004), pf("∀x∀y.(x + S(y) = S(x + y))"))
-    th0005.d
-
-    println()
-    println("  (4)")
-    val ft0101 = pf("∀x∀y.(x=y → S(x)=S(y))")
-    val th0101 = inferenceRuleAxiomFromTheory(thEq, ft0101)
-    th0101.d
-
-    println()
-    val th1102 = inferenceRuleAxiom(pf("z+0=z → S(z+0)=S(z)"))
-    th1102.d
-    val th1103 = inferenceRuleUnivL(th1102, pf("z+0=y → S(z+0)=S(y)"),
-      (pt("z"), var_y))
-    th1103.d
-    val th1104 = inferenceRuleUnivL(th1103, pf("∀y.(x=y → S(x)=S(y))"),
-      (pt("z+0"), var_x))
-    th1104.d
-    val th1105 = inferenceRuleCut((th0101, th1104), pf("∀x∀y.(x=y → S(x)=S(y))"))
-    th1105.d
-    val th1106 = inferenceRuleUnivR(th1105, pf("x+0=x → S(x+0)=S(x)"),
-      (var_z, var_x))
-    th1106.d
-
-    println()
-    val th1107 = inferenceRuleAxiom(pf("x+0=x → S(x+0)=S(x)"))
-    th1107.d
-    val th1108 = inferenceRuleUnivL(th1107, pf("x+0=x → S(x+0)=S(x)"),
-      (pt("x"), var_x))
-    th1108.d
-    val th1109 = inferenceRuleCut((th1106, th1108), pf("∀x.(x+0=x → S(x+0)=S(x))"))
-    th1109.d
-    val th1110 = inferenceRuleRool1b(th1109, (pf("x+0 = x"), pf("S(x+0)=S(x)")))
-    th1110.d
-
-    println()
-    val th0106 = inferenceRuleAxiom(pf("x+0 = x"))
-    th0106.d
-    val th0107 = inferenceRuleUnivL(th0106, pf("x+0 = x"),
-      (pt("x"), var_x))
-    th0107.d
-    val th0108 = inferenceRuleCut((thPA3, th0107), pf("∀x.(x+0 = x)"))
-    th0108.d
-    val th0109 = inferenceRuleCut((th0108, th1110), pf("x+0 = x"))
-    th0109.d
-
-    println()
-    val th0131 = inferenceRuleAndR((th0005, th0109),
-      (pf("x+S(0) = S(x+0)"), pf("S(x+0) = S(x)")))
-    th0131.d
-
-    println()
-    val ff0132 = pf("x+S(0)=S(x+0) ∧ S(x+0)=S(x) → x+S(0)=S(x)")
-    val th0132 = inferenceRuleAxiom(ff0132)
-    th0132.d
-    val ff0133 = pf("x+S(0)=S(x+0) ∧ S(x+0)=z → x+S(0)=z")
-    val th0133 = inferenceRuleUnivL(th0132, ff0133,
-      (pt("S(x)"), var_z))
-    th0133.d
-    val ff0134 = pf("∀z.(x+S(0)=y ∧ y=z → x+S(0)=z)")
-    val th0134 = inferenceRuleUnivL(th0133, ff0134,
-      (pt("S(x+0)"), var_y))
-    th0134.d
-    val ff0135 = pf("∀y∀z.(x=y ∧ y=z → x=z)")
-    val th0135 = inferenceRuleUnivL(th0134, ff0135,
-      (pt("x+S(0)"), var_x))
-    th0135.d
-    val th0136 = inferenceRuleCut((thEq3, th0135),
-      pf("∀x∀y∀z.(x=y ∧ y=z → x=z)"))
-    th0136.d
-    val ff0137 = pf("x+S(0)=S(x+0) ∧ S(x+0)=S(x)")
-    val th0137 = inferenceRuleRool1b(th0136, (ff0137, pf("x+S(0)=S(x)")))
-    th0137.d
-
-    println()
-    val th0138 = inferenceRuleCut((th0131, th0137), ff0137)
-    th0138.d
-    val th0139 = inferenceRuleUnivR(th0138, pf("x+S(0)=S(x)"),
-      (var_x, var_x))
-    th0139.d
-
     println()
     thEq.d
     thEq1.d
@@ -957,6 +969,9 @@ object test {
     val th888 = inferenceRuleAxiomFromTheory(thEq, pf("∀x0∀x1∀x2∀x3∀x∀x5∀y.(x=y → f(x0, x1, x2, x3, x, x5) = f(x0, x1, x2, x3, y, x5))"))
     th888.d
 
+    println
+    println("#### Block 8.1 test: tacticReplaceTerm, tacticReplaceFormula")
+
     println()
     val th1001 = inferenceRuleAxiom(pf("b=a → a=b"))
                                                     //  b=a → a=b ⊢ b=a → a=b
@@ -967,25 +982,25 @@ object test {
     val th1004 = inferenceRuleCut((thEq2, th1003), pf("∀x∀y.(x=y → y=x)"))
                                                     //  Eq ⊢ b=a → a=b
     val th1005 = inferenceRuleRool1b(th1004, (pf("b = a"), pf("a = b")))
-                                                    //  Eq, b=a ⊢ a=b
+                                                    //  Eq, b=a ⊢ a=b
     th1005.d
 
     println()
-    val th1011 = tacticReplaceTerm(th1005, pf("a = b"),
+    val th1011 = tacticReplaceTerm(th1005, (pt("a"), pt("b")),
       (pf("P(a)"), pf("P(b)")))
     th1011.d
-    val th1012 = tacticReplaceTerm(th1005, pf("a = b"),
+    val th1012 = tacticReplaceTerm(th1005, (pt("a"), pt("b")),
       (pf("P(0, 0, a, 0)"), pf("P(0, 0, b, 0)")))
     th1012.d
-    val th1013 = tacticReplaceTerm(th1005, pf("a = b"),
+    val th1013 = tacticReplaceTerm(th1005, (pt("a"), pt("b")),
       (pf("A ∧ P(0, 0, a, 0) ∨ B"), pf("A ∧ P(0, 0, b, 0) ∨ B")))
     th1013.d
 
     println()
-    val th1021 = tacticReplaceTerm(th1005, pf("a = b"),
+    val th1021 = tacticReplaceTerm(th1005, (pt("a"), pt("b")),
       (pf("P(0, 0, S(f(0, 0+a)), 0)"), pf("P(0, 0, S(f(0, 0+b)), 0)")))
     th1021.d
-    val th1022 = tacticReplaceTerm(th1005, pf("a = b"),
+    val th1022 = tacticReplaceTerm(th1005, (pt("a"), pt("b")),
       (pf("A ∧ P(0, 0, S(f(0, 0+a)), 0) ∨ B"), pf("A ∧ P(0, 0, S(f(0, 0+b)), 0) ∨ B")))
     th1022.d
 
@@ -1000,31 +1015,210 @@ object test {
     val th2013 = inferenceRuleWeakenL(th2012, thPA)
     val th2014 = inferenceRuleContractL(th2013, thPA, pf{"∀x.(x+0 = x)"})
     th2014.d
-    val th2021 = tacticReplaceTerm(th2014, pf("b = b+0"),
+    val th2021 = tacticReplaceTerm(th2014, (pt("b+0"), pt("b")),
       (pf("(a + b) + 0 = a + b"), pf("(a + b) + 0 = a + (b + 0)")))
     th2021.d
 
-
-
     println()
-    val th2201 = tacticReplaceTerm(th1005, pf("a = b"),
+    val th2201 = tacticReplaceTerm(th1005, (pt("a"), pt("b")),
       (pf("(c + d) + 0 = c + a"), pf("(c + d) + 0 = c + b")))
     th2201.d
-    val th2202 = tacticReplaceTerm(th1005, pf("a = b"),
+    val th2202 = tacticReplaceTerm(th1005, (pt("a"), pt("b")),
       (pf("(a + b) + 0 = a + a"), pf("(a + b) + 0 = a + b")))
     th2202.d
     val th2211 = inferenceRuleAxiom(pf("a = b"))
-    val th2212 = tacticReplaceTerm(th2211, pf("a = b"),
+    val th2212 = tacticReplaceTerm(th2211, (pt("a"), pt("b")),
       (pf("(a + b) + 0 = a + a"), pf("(a + b) + 0 = a + b")))
     th2212.d
     val th2213 = inferenceRuleAxiom(pf("b = a"))
-    val th2214 = tacticReplaceTerm(th2213, pf("b = a"),
+    val th2214 = tacticReplaceTerm(th2213, (pt("b"), pt("a")),
       (pf("(a + b) + 0 = a + b"), pf("(a + b) + 0 = a + a")))
     th2214.d
     val th2215 = inferenceRuleAxiom(pf("b = b+0"))
-    val th2216 = tacticReplaceTerm(th2215, pf("b = b+0"),
+    val th2216 = tacticReplaceTerm(th2215, (pt("b"), pt("b+0")),
       (pf("(a + b) + 0 = a + b"), pf("(a + b) + 0 = a + (b + 0)")))
     th2216.d
+    val th2217 = inferenceRuleAxiom(pf("b+0 = b"))
+    val th2218 = tacticReplaceTerm(th2217, (pt("b+0"), pt("b")),
+      (pf("(a + b) + 0 = a + b"), pf("(a + b) + 0 = a + (b + 0)")))
+    th2218.d
+
+    println
+    println("#### Block 9 test: Addition is associative")
+
+    println()
+    val th0001 = inferenceRuleAxiom(pf("∀x.(x + S(0) = S(x))"))
+    th0001.d                                        //  ∀x(x+S(0)=S(x)) ⊢ ∀x(x+S(0)=S(x))
+
+    println()
+    println("  (3)")
+    val th0002 = inferenceRuleAxiom(pf("x + S(0) = S(x + 0)"))
+    th0002.d                                        //  x+S(0)=S(x+0) ⊢ x+S(0)=S(x+0)
+    val th0003 = inferenceRuleUnivL(th0002, pf("x + S(y) = S(x + y)"),
+      (pt("0"), var_y))                             //  ∀y(x+S(y)=S(x+y)) ⊢ x+S(0)=S(x+0)
+    th0003.d
+    val th0004 = inferenceRuleUnivL(th0003, pf("∀y.(x + S(y) = S(x + y))"),
+      (pt("x"), var_x))                             //  ∀x∀y(x+S(y)=S(x+y)) ⊢ x+S(0)=S(x+0)
+    th0004.d
+    val th0005 = inferenceRuleCut((thPA4, th0004), pf("∀x∀y.(x + S(y) = S(x + y))"))
+    th0005.d                                        //  PA ⊢ x+S(0)=S(x+0)
+
+    println()
+    println("  (4)")
+    val ft0101 = pf("∀x∀y.(x=y → S(x)=S(y))")
+    val th0101 = inferenceRuleAxiomFromTheory(thEq, ft0101)
+    th0101.d                                        //  Eq ⊢ ∀x∀y(x=y → S(x)=S(y))
+
+    println()
+    val th1102 = inferenceRuleAxiom(pf("z+0=z → S(z+0)=S(z)"))
+    th1102.d                                        //  z+0=z → S(z+0)=S(z) ⊢ z+0=z → S(z+0)=S(z)
+    val th1103 = inferenceRuleUnivL(th1102, pf("z+0=y → S(z+0)=S(y)"),
+      (pt("z"), var_y))                             //  ∀y(z+0=y → S(z+0)=S(y)) ⊢ z+0=z → S(z+0)=S(z)
+    th1103.d
+    val th1104 = inferenceRuleUnivL(th1103, pf("∀y.(x=y → S(x)=S(y))"),
+      (pt("z+0"), var_x))                           //  ∀x∀y(x=y → S(x)=S(y)) ⊢ z+0=z → S(z+0)=S(z)
+    th1104.d
+    val th1105 = inferenceRuleCut((th0101, th1104), pf("∀x∀y.(x=y → S(x)=S(y))"))
+    th1105.d                                        //  Eq ⊢ z+0=z → S(z+0)=S(z)
+    val th1106 = inferenceRuleUnivR(th1105, pf("x+0=x → S(x+0)=S(x)"),
+      (var_z, var_x))                               //  Eq ⊢ ∀x(x+0=x → S(x+0)=S(x))
+    th1106.d
+
+    println()
+    val th1107 = inferenceRuleAxiom(pf("x+0=x → S(x+0)=S(x)"))
+    th1107.d                                        //  x+0=x → S(x+0)=S(x) ⊢ x+0=x → S(x+0)=S(x)
+    val th1108 = inferenceRuleUnivL(th1107, pf("x+0=x → S(x+0)=S(x)"),
+      (pt("x"), var_x))                             //  ∀x(x+0=x → S(x+0)=S(x)) ⊢ x+0=x → S(x+0)=S(x)
+    th1108.d
+    val th1109 = inferenceRuleCut((th1106, th1108), pf("∀x.(x+0=x → S(x+0)=S(x))"))
+    th1109.d                                        //  Eq ⊢ x+0=x → S(x+0)=S(x)
+    val th1110 = inferenceRuleRool1b(th1109, (pf("x+0 = x"), pf("S(x+0)=S(x)")))
+    th1110.d                                        //  Eq, x+0=x ⊢ S(x+0)=S(x)
+
+    println()
+    val th0106 = inferenceRuleAxiom(pf("x+0 = x"))  //  x+0=x ⊢ x+0=x
+    th0106.d
+    val th0107 = inferenceRuleUnivL(th0106, pf("x+0 = x"),
+      (pt("x"), var_x))                             //  ∀x(x+0=x) ⊢ x+0=x
+    th0107.d
+    val th0108 = inferenceRuleCut((thPA3, th0107), pf("∀x.(x+0 = x)"))
+    th0108.d                                        //  PA ⊢ x+0=x
+    val th0109 = inferenceRuleCut((th0108, th1110), pf("x+0 = x"))
+    th0109.d                                        //  PA, Eq ⊢ S(x+0)=S(x)
+
+    println()
+    val th0131 = inferenceRuleAndR((th0005, th0109),
+      (pf("x+S(0) = S(x+0)"), pf("S(x+0) = S(x)"))) //  PA ⊢ x+S(0)=S(x+0) ∧ S(x+0)=S(x)
+    th0131.d
+
+    println()
+    val ff0132 = pf("x+S(0)=S(x+0) ∧ S(x+0)=S(x) → x+S(0)=S(x)")
+    val th0132 = inferenceRuleAxiom(ff0132)         //  x+S(0)=S(x+0) ∧ S(x+0)=S(x) → x+S(0)=S(x)
+    th0132.d                                        //    ⊢ x+S(0)=S(x+0) ∧ S(x+0)=S(x) → x+S(0)=S(x)
+    val ff0133 = pf("x+S(0)=S(x+0) ∧ S(x+0)=z → x+S(0)=z")
+    val th0133 = inferenceRuleUnivL(th0132, ff0133, //  ∀z(x+S(0)=S(x+0) ∧ S(x+0)=z → x+S(0)=z)
+      (pt("S(x)"), var_z))                          //    ⊢ x+S(0)=S(x+0) ∧ S(x+0)=S(x) → x+S(0)=S(x)
+    th0133.d
+    val ff0134 = pf("∀z.(x+S(0)=y ∧ y=z → x+S(0)=z)")
+    val th0134 = inferenceRuleUnivL(th0133, ff0134, //  ∀y∀z(x+S(0)=y ∧ y=z → x+S(0)=z)
+      (pt("S(x+0)"), var_y))                        //    ⊢ x+S(0)=S(x+0) ∧ S(x+0)=S(x) → x+S(0)=S(x)
+    th0134.d
+    val ff0135 = pf("∀y∀z.(x=y ∧ y=z → x=z)")
+    val th0135 = inferenceRuleUnivL(th0134, ff0135, //  ∀x∀y∀z(x=y ∧ y=z → x=z)
+      (pt("x+S(0)"), var_x))                        //    ⊢ x+S(0)=S(x+0) ∧ S(x+0)=S(x) → x+S(0)=S(x)
+    th0135.d
+    val th0136 = inferenceRuleCut((thEq3, th0135),  //  Eq ⊢ x+S(0)=S(x+0) ∧ S(x+0)=S(x) → x+S(0)=S(x)
+      pf("∀x∀y∀z.(x=y ∧ y=z → x=z)"))
+    th0136.d
+    val ff0137 = pf("x+S(0)=S(x+0) ∧ S(x+0)=S(x)")
+    val th0137 = inferenceRuleRool1b(th0136, (ff0137, pf("x+S(0)=S(x)")))
+    th0137.d                                        //  Eq, x+S(0)=S(x+0) ∧ S(x+0)=S(x) ⊢ x+S(0)=S(x)
+
+    println()
+    val th0138 = inferenceRuleCut((th0131, th0137), ff0137)
+    th0138.d                                        //  PA, Eq ⊢ x+S(0)=S(x)
+    val th0139 = inferenceRuleUnivR(th0138, pf("x+S(0)=S(x)"),
+      (var_x, var_x))                               //  PA, Eq ⊢ ∀x(x+S(0)=S(x))
+    th0139.d
+
+    println()
+    println("Alternatively...")
+
+    println()
+    val th0151 = inferenceRuleAxiom(pf("x+S(0) = S(x+0)"))
+    th0151.d                                        //  x+S(0) = S(x+0) ⊢ x+S(0) = S(x+0)
+    val th0152 = inferenceRuleUnivL(th0151, pf("x+S(y) = S(x+y)"),
+      (pt("0"), var_y))                             //  ∀y(x+S(y) = S(x+y)) ⊢ x+S(0) = S(x+0)
+    th0152.d
+    val th0153 = inferenceRuleUnivL(th0152, pf("∀y.(x+S(y) = S(x+y))"),
+      (v_x, var_x))                                 //  ∀x∀y(x+S(y) = S(x+y)) ⊢ x+S(0) = S(x+0)
+    th0153.d
+    val th0154 = inferenceRuleWeakenL(th0153, thPA) //  PA, ∀x∀y(x+S(y) = S(x+y)) ⊢ x+S(0) = S(x+0)
+    th0154.d
+    val th0155 = inferenceRuleContractL(th0154, thPA, pf("∀x∀y.(x+S(y) = S(x+y))"))
+    th0155.d                                        //  PA ⊢ x+S(0) = S(x+0)
+
+    println()
+    val th0161 = inferenceRuleAxiom(pf("x+0 = x"))
+    th0161.d                                        //  x+0 = x ⊢ x+0 = x
+    val th0162 = inferenceRuleUnivL(th0161, pf("x+0 = x"),
+      (v_x, var_x))                                 //  ∀x(x+0 = x) ⊢ x+0 = x
+    th0162.d
+    val th0163 = inferenceRuleCut((thPA3, th0162), pf("∀x.(x+0 = x)"))
+    th0163.d                                        //  PA ⊢ x+0 = x
+    val th0164 = tacticReplaceTerm(th0163, (pt("x+0"), pt("x")),
+      (pf("x+S(0) = S(x+0)"), pf("x+S(0) = S(x)"))) //  Eq, x+S(0) = S(x+0) ⊢ x+S(0) = S(x)
+    th0164.d
+    val th0165 = inferenceRuleCut((th0155, th0164), pf("x+S(0) = S(x+0)"))
+    th0165.d                                        //  PA, Eq, x+S(0) = S(x+0) ⊢ x+S(0) = S(x+0)
+
+
+
+
+    import wooble._
+    println
+    println
+    val e0 = new Element
+    val e1 = new Element
+    val e2 = new Element
+    val e3 = new Element
+    val e4 = new Element
+    val e5 = new Element
+    val e6 = new Element
+    val e7 = new Element
+    val e8 = new Element
+    val e9 = new Element
+
+    e1.unite(e3)
+    e7.unite(e2)
+    e1.unite(e2)
+
+    def prxx(e: Element, i: Int): Int = {
+      val v = e.find()
+      val (index, nextIndex) = v.name match {
+        case None =>
+          v.name = Some(i)
+          (i, i+1)
+        case Some(idx) =>
+          (idx, i)
+      }
+      println(index)
+      nextIndex
+    }
+
+    val n0 = prxx(e0, 0)
+    val n1 = prxx(e1, n0)
+    val n2 = prxx(e2, n1)
+    val n3 = prxx(e3, n2)
+    val n4 = prxx(e4, n3)
+    val n5 = prxx(e5, n4)
+    val n6 = prxx(e6, n5)
+    val n7 = prxx(e7, n6)
+    val n8 = prxx(e8, n7)
+    val n9 = prxx(e9, n8)
+
+
+
   }
 
 }

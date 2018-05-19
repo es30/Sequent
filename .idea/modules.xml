@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Formula/Formula.iml" filepath="$PROJECT_DIR$/Formula/Formula.iml" />
       <module fileurl="file://$PROJECT_DIR$/FrontEnd/FrontEnd.iml" filepath="$PROJECT_DIR$/FrontEnd/FrontEnd.iml" />
       <module fileurl="file://$PROJECT_DIR$/Sequent/Sequent.iml" filepath="$PROJECT_DIR$/Sequent/Sequent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Stratum1/Stratum1.iml" filepath="$PROJECT_DIR$/Stratum1/Stratum1.iml" />
     </modules>
   </component>
 </project>

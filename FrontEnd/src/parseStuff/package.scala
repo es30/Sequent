@@ -39,6 +39,7 @@ package object parseStuff {
     lookupFunction(s, new FunctionInfix(s))
 
   val predicateIsElementOf                = addPredicateInfix("∈")
+  val predicateIsSubsetOfOrEqualTo        = addPredicateInfix("⊆")
   val predicateIsEqualTo                  = addPredicateInfix("=")
   val predicateIsNotEqualTo               = addPredicateInfix("≠")
   val predicateIsLessThan                 = addPredicateInfix("<")
@@ -86,7 +87,7 @@ package object parseStuff {
 */
   def pt(s: String): Term =
   {
-    val input  = new ANTLRInputStream(s)
+    val input  = CharStreams.fromString(s)
     val lexer  = new ParseStuffLexer(input)
     val tokens = new CommonTokenStream(lexer)
     val parser = new ParseStuffParser(tokens)
@@ -106,7 +107,7 @@ package object parseStuff {
 
   def pf(s: String): Formula =
   {
-    val input  = new ANTLRInputStream(s)
+    val input  = CharStreams.fromString(s)
     val lexer  = new ParseStuffLexer(input)
     val tokens = new CommonTokenStream(lexer)
     val parser = new ParseStuffParser(tokens)
@@ -131,7 +132,7 @@ package object parseStuff {
 /*  def pf(s: String) =
   {
     try {
-      val input = new ANTLRInputStream(s)
+      val input = CharStreams.fromString(s)
       //    new MyParser(input)
       val myParser = new MyParser(input)
       val myParseTree = myParser.parser.formula
@@ -155,7 +156,7 @@ package object parseStuff {
 
   def psf(s: String): SFormula =
   {
-    val input  = new ANTLRInputStream(s)
+    val input  = CharStreams.fromString(s)
     val lexer  = new ParseStuffLexer(input)
     val tokens = new CommonTokenStream(lexer)
     val parser = new ParseStuffParser(tokens)

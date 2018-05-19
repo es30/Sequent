@@ -6,6 +6,10 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="FrontEnd" />
+    <orderEntry type="module" module-name="Sequent" />
+    <orderEntry type="module" module-name="Formula" />
+    <orderEntry type="library" name="com.chuusai:shapeless_2.12:2.3.3" level="application" />
     <orderEntry type="library" name="scala-sdk-2.12.6" level="application" />
     <orderEntry type="jdk" jdkName="10" jdkType="JavaSDK" />
   </component>

@@ -15,7 +15,7 @@ import p_formula.P_Formula.lookupProposition
 
 object deconstruct {
 
-  val term_marker = lookupVarName("Z")
+  private val term_marker = lookupVarName("Z")
 
   implicit class P_TermDeconstructor(val template: P_Term) {
 
@@ -91,7 +91,7 @@ object deconstruct {
 
   }
 
-  val formula_marker = lookupProposition("Z")
+  private val formula_marker = lookupProposition("Z")
 
   implicit class FormulaDeconstructor(val template: Formula) {
 
@@ -175,7 +175,7 @@ object deconstruct {
 
   }
 
-  def deconstruct_continue(
+  private def deconstruct_continue(
       continuation: Option[() => TailRec[Boolean]],
       retval: Boolean
     ): TailRec[Boolean] =

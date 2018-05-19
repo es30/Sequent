@@ -334,8 +334,9 @@ object substitute {
 
       }
 
-    def substitution_continue(
-        continuation: Option[Option[(P_Formula, Option[Error])] => TailRec[Option[(P_Formula, Option[Error])]]],
+    private def substitution_continue(
+        continuation: Option[Option[(P_Formula, Option[Error])] =>
+          TailRec[Option[(P_Formula, Option[Error])]]],
         retval: Option[(P_Formula, Option[Error])]
       ): TailRec[Option[(P_Formula, Option[Error])]] =
       continuation match {

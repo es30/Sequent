@@ -362,6 +362,98 @@ package object foundationalInferenceRule {
     )
 
 
+  //  Γ ⊢ A, Δ    Σ, B ⊢ Π
+  //  -------------------- (↔L₁)
+  //  Γ, Σ, A ↔ B ⊢ Δ, Π
+
+  val inferenceRuleBicondL1 =
+    foundationalInferenceRule("↔L₁",
+      (
+        s: P_SeqPair,                   //  (Γ ⊢ A, Δ; Σ, B ⊢ Π)
+        f: P_FormPair                   //  (A, B)
+      ) => {
+        val (sL, sR) = s
+        val (fa, fb) = f
+//      val  a = CTESFormula(fa)
+//      val  b = CTESFormula(fb)
+        val ab = CTESFormula(P_FormulaBiconditional(fa, fb))
+        val  gamma      = CTECedent(sL.ante     )
+        val (delta, error_L_succ) = sL.succ - fa
+        val (sigma, error_R_ante) = sR.ante - fb
+        val     pi      = CTECedent(sR.succ     )
+        (
+          Set(gamma, sigma, ab), Set(delta, pi),
+          Seq(
+            zz_Error_L_succ(error_L_succ),
+            zz_Error_R_ante(error_R_ante)
+          )
+        )
+      }: Rxxx
+    )
+
+
+  //  Γ, A ⊢ Δ    Σ ⊢ B, Π
+  //  -------------------- (↔L₂)
+  //  Γ, Σ, A ↔ B ⊢ Δ, Π
+
+  val inferenceRuleBicondL2 =
+    foundationalInferenceRule("↔L₂",
+      (
+        s: P_SeqPair,                   //  (Γ, A ⊢ Δ; Σ ⊢ B, Π)
+        f: P_FormPair                   //  (A, B)
+      ) => {
+        val (sL, sR) = s
+        val (fa, fb) = f
+//      val  a = CTESFormula(fa)
+//      val  b = CTESFormula(fb)
+        val ab = CTESFormula(P_FormulaBiconditional(fa, fb))
+        val (gamma, error_L_ante) = sL.ante - fa
+        val  delta      = CTECedent(sL.succ     )
+        val  sigma      = CTECedent(sR.ante     )
+        val (   pi, error_R_succ) = sR.succ - fb
+        (
+          Set(gamma, sigma, ab), Set(delta, pi),
+          Seq(
+            zz_Error_L_succ(error_L_ante),
+            zz_Error_R_ante(error_R_succ)
+          )
+        )
+      }: Rxxx
+    )
+
+
+  //  Γ, A ⊢ B, Δ    Σ, B ⊢ A, Π
+  //  ------------------------- (↔R)
+  //  Γ, Σ ⊢ A ↔ B, Δ, Π
+
+  val inferenceRuleBicondR =
+    foundationalInferenceRule("↔R",
+      (
+        s: P_SeqPair,                   //  (Γ, A ⊢ B, Δ; Σ, B ⊢ A, Π)
+        f: P_FormPair                   //  (A, B)
+      ) => {
+        val (sL, sR) = s
+        val (fa, fb) = f
+//      val  a = CTESFormula(fa)
+//      val  b = CTESFormula(fb)
+        val ab = CTESFormula(P_FormulaBiconditional(fa, fb))
+        val (gamma, error_L_ante) = sL.ante - fa
+        val (delta, error_L_succ) = sL.succ - fb
+        val (sigma, error_R_ante) = sR.ante - fb
+        val (   pi, error_R_succ) = sR.succ - fa
+        (
+          Set(gamma, sigma), Set(ab, delta, pi),
+          Seq(
+            zz_Error_ante(error_L_ante),
+            zz_Error_ante(error_L_succ),
+            zz_Error_ante(error_R_ante),
+            zz_Error_succ(error_R_succ)
+          )
+        )
+      }: Rxxx
+    )
+
+
   //  Γ ⊢ A, Δ
   //  --------- (¬L)
   //  Γ, ¬A ⊢ Δ
@@ -588,7 +680,7 @@ package object foundationalInferenceRule {
 
 
   //  Γ, Theory, A ⊢ Δ
-  //  ---------------- (WR)
+  //  ---------------- (CL)
   //  Γ, Theory ⊢ Δ
 
   val inferenceRuleContractL =

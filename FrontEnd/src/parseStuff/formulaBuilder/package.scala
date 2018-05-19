@@ -191,10 +191,10 @@ package object formulaBuilder {
 
   import shapeless.ops.function.{FnFromProduct, FnToProduct}
 
-/*
-  def formulaBuilder[Ta <: HList, T <: HList, F, Tout](f: F)
+  def formulaBuilder[Ta <: HList, T <: HList, F, S, Tout](f: F)
     (implicit
-      ftp: FnToProduct.Aux[F, T => Option[Error] => Tout],
+      ftp: FnToProduct.Aux[F, T => S],
+      s: S <:< (Option[Error] => Tout),
       vet: VetApplicand[Ta, T],
       enc: Encapsulator[Tout],
       ffp: FnFromProduct[Ta => Tout]
@@ -272,205 +272,7 @@ package object formulaBuilder {
     )
 
   val formulaAxiomatization =
-    FormulaBuilder(
-      (
-        a: P_Axiomatization
-      ) => (
-        error: Option[Error]
-      ) => P_SFormulaAxiomatization(a): SFormula
-    )
-
-  val formulaApplication =
     formulaBuilder(
-      (
-        p: P_Predicate,
-        a: P_Applicand
-      ) => (
-        error: Option[Error]
-      ) => P_FormulaApplication(p, a, error): Formula
-    )
-
-  val formulaNegation =
-    formulaBuilder(
-      (
-        f1: P_Formula
-      ) => (
-        error: Option[Error]
-      ) => P_FormulaNegation(f1, error): Formula
-    )
-
-  val formulaQuantification =
-    formulaBuilder(
-      (
-        q: QuantificationKind.Kind,
-        v: P_VarName,
-        f1: P_Formula
-      ) => (
-        error: Option[Error]
-      ) => P_FormulaQuantification(q, v, f1 , error): Formula
-    )
-
-// ====================================================================
-
-  val termApplication =
-    formulaBuilder(
-      (
-        f: P_Function,
-        a: P_Applicand
-      ) => (
-        error: Option[Error]
-      ) => P_TermApplication(f, a, error): Term
-    )
-
-  val termVariable =
-    formulaBuilder(
-      (
-        v: P_VarName
-      ) => (
-        error: Option[Error]
-      ) => P_TermVariable(v, error): Term
-    )
-*/
-
-// ====================================================================
-
-  def formulaBuilder[Ta <: HList, T <: HList, F, Tout](f: F)
-    (implicit
-      ftp: FnToProduct.Aux[F, T => Option[Error] => Formula],
-      vet: VetApplicand[Ta, T],
-      enc: Encapsulator[Formula],
-      ffp: FnFromProduct[Ta => Formula]
-    ): ffp.Out =
-    ffp(
-      (a: Ta) => {
-
-        //  Scrutinize the arguments in the wrapper's applicand
-        //  and convert them to a form consumable by the wrapped
-        //  inference rule.
-
-        val (applicand, errorListExt, error) = vet.vetApplicand(a, 1)
-        val combinedError = errorListCombined(error, errorListExt)
-
-        //  Apply the builder if there is an applicand
-        //  to which to apply it.
-
-        applicand match {
-          case Some(x) => ftp(f)(x)(combinedError)
-          case none => enc.encapsulation(combinedError)
-        }
-
-      }
-    )
-
-  def sFormulaBuilder[Ta <: HList, T <: HList, F, Tout](f: F)
-    (implicit
-      ftp: FnToProduct.Aux[F, T => Option[Error] => SFormula],
-      vet: VetApplicand[Ta, T],
-      enc: Encapsulator[SFormula],
-      ffp: FnFromProduct[Ta => SFormula]
-    ): ffp.Out =
-    ffp(
-      (a: Ta) => {
-
-        //  Scrutinize the arguments in the wrapper's applicand
-        //  and convert them to a form consumable by the wrapped
-        //  inference rule.
-
-        val (applicand, errorListExt, error) = vet.vetApplicand(a, 1)
-        val combinedError = errorListCombined(error, errorListExt)
-
-        //  Apply the builder if there is an applicand
-        //  to which to apply it.
-
-        applicand match {
-          case Some(x) => ftp(f)(x)(combinedError)
-          case none => enc.encapsulation(combinedError)
-        }
-
-      }
-    )
-
-  def termBuilder[Ta <: HList, T <: HList, F, Tout](f: F)
-    (implicit
-      ftp: FnToProduct.Aux[F, T => Option[Error] => Term],
-      vet: VetApplicand[Ta, T],
-      enc: Encapsulator[Term],
-      ffp: FnFromProduct[Ta => Term]
-    ): ffp.Out =
-    ffp(
-      (a: Ta) => {
-
-        //  Scrutinize the arguments in the wrapper's applicand
-        //  and convert them to a form consumable by the wrapped
-        //  inference rule.
-
-        val (applicand, errorListExt, error) = vet.vetApplicand(a, 1)
-        val combinedError = errorListCombined(error, errorListExt)
-
-        //  Apply the builder if there is an applicand
-        //  to which to apply it.
-
-        applicand match {
-          case Some(x) => ftp(f)(x)(combinedError)
-          case none => enc.encapsulation(combinedError)
-        }
-
-      }
-    )
-
-// ====================================================================
-
-  val formulaBiconditional =
-    formulaBuilder(
-      (
-        f1: P_Formula,
-        f2: P_Formula
-      ) => (
-        error: Option[Error]
-      ) => P_FormulaBiconditional(f1, f2, error): Formula
-    )
-
-  val formulaImplication =
-    formulaBuilder(
-      (
-        f1: P_Formula,
-        f2: P_Formula
-      ) => (
-        error: Option[Error]
-      ) => P_FormulaImplication(f1, f2, error): Formula
-    )
-
-  val formulaDisjunction =
-    formulaBuilder(
-      (
-        f1: P_Formula,
-        f2: P_Formula
-      ) => (
-        error: Option[Error]
-      ) => P_FormulaDisjunction(f1, f2, error): Formula
-    )
-
-  val formulaConjunction =
-    formulaBuilder(
-      (
-        f1: P_Formula,
-        f2: P_Formula
-      ) => (
-        error: Option[Error]
-      ) => P_FormulaConjunction(f1, f2, error): Formula
-    )
-
-  val formulaProposition =
-    formulaBuilder(
-      (
-        p: P_Proposition
-      ) => (
-        error: Option[Error]
-      ) => P_FormulaProposition(p, error): Formula
-    )
-
-  val formulaAxiomatization =
-    sFormulaBuilder(
       (
         a: P_Axiomatization
       ) => (
@@ -511,7 +313,7 @@ package object formulaBuilder {
 // ====================================================================
 
   val termApplication =
-    termBuilder(
+    formulaBuilder(
       (
         f: P_Function,
         a: P_Applicand
@@ -521,7 +323,7 @@ package object formulaBuilder {
     )
 
   val termVariable =
-    termBuilder(
+    formulaBuilder(
       (
         v: P_VarName
       ) => (

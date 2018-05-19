@@ -375,7 +375,7 @@ object diff {
 
   }
 
-  def diff_continue(
+  private def diff_continue(
       continuation: Option[() => TailRec[Option[List[DiffElement]]]],
       retval: Option[List[DiffElement]]
     ): TailRec[Option[List[DiffElement]]] =

@@ -33,6 +33,7 @@ package object inferenceRuleWrapper {
   type SFormQuadruple = (SFormula, SFormula, SFormula, SFormula)
 
   //type Term
+  type TermPair = (Term, Term)
 
   //type P_VarName
 
@@ -56,6 +57,7 @@ package object inferenceRuleWrapper {
   //type P_SForm = P_SFormula
 
   //type P_Term
+  type P_TermPair = (P_Term, P_Term)
 
   //type P_VarName
 
@@ -115,6 +117,7 @@ package object inferenceRuleWrapper {
     val fake_P_FormPair: P_FormPair = null
     val fake_P_FormTriple: P_FormTriple = null
     val fake_P_FormQuadruple: P_FormQuadruple = null
+    val fake_P_TermPair: P_TermPair = null
     val fake_P_Term_P_VarName: P_Term_P_VarName = null
     val fake_P_VarNamePair: P_VarNamePair = null
 
@@ -209,6 +212,8 @@ package object inferenceRuleWrapper {
         }
       }: AType[P_VarName])
 
+    implicit val caseTermPair2P = at[TermPair](
+      x => argTuple(x, fake_P_TermPair): AType[P_TermPair])
     implicit val caseTerm_P_VarName2P = at[Term_P_VarName](
       x => argTuple(x, fake_P_Term_P_VarName): AType[P_Term_P_VarName])
     implicit val caseP_VarNamePair = at[P_VarNamePair](

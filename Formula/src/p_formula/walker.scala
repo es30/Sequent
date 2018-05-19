@@ -55,7 +55,7 @@ object walker {
 
   }
 
-  def walk_continue(
+  private def walk_continue(
       continuation: Option[() => TailRec[Boolean]],
       retval: Boolean
     ): TailRec[Boolean] =

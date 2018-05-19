@@ -29,7 +29,7 @@ object walker {
       ): TailRec[Boolean] =
       term match {
 
-        case tc: P_TermConstant =>
+        case _: P_TermConstant =>
           tailcall(walk_continue(continuation, false))
 
         case tv: P_TermVariable =>
@@ -70,7 +70,7 @@ object walker {
 
   }
 
-  def walk_continue(
+  private def walk_continue(
       continuation: Option[() => TailRec[Boolean]],
       retval: Boolean
     ): TailRec[Boolean] =

@@ -29,8 +29,6 @@ object subsumer extends P_Axiomatization("Eq") {
   private val var_x = v("x")
   private val var_y = v("y")
 
-  private val v_y = P_TermVariable(var_x)
-
   private class PrefixVisitor extends Visitor[List[P_VarName]] {
     def collect(v: P_VarName, vars: List[P_VarName]): List[P_VarName] =
       v :: vars
@@ -64,8 +62,9 @@ object subsumer extends P_Axiomatization("Eq") {
               v1 == vars.head && {
               val varsTail = vars.tail
               !(varsTail contains v1) && {
-                if (v2 == var_y)
-                  !substFound &&
+                if (v1 == var_x)
+                  v2 == var_y &&
+                    !substFound &&
                     checkTails(termIndex + 1, varsTail, true)
                 else
                   v1 == v2 &&
