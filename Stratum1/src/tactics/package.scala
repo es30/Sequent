@@ -17,12 +17,11 @@ package object tactics {
 
   import sequent._
   import p_sequent._
-  import inferenceRuleWrapper._
   import foundationalInferenceRule._
   import derivedInferenceRule._
 
   import parseStuff._
-  import axiomatization_Eq.theorems._
+  import theorems_Eq.theorems._
   import tactics.walker.SynVarIndex
 
 

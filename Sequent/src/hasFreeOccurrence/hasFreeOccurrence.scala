@@ -1,4 +1,4 @@
-package substitution
+package hasFreeOccurrence
 
 import p_term.P_VarName
 import p_formula._

@@ -1,11 +1,10 @@
-package substitution
+package p_formula
 
 import scala.util.control.TailCalls._
 
 import error._
 import error.Error.collect
 import p_term._
-import p_formula._
 
 /**
   * Created by EdSnow on 12/29/2016.

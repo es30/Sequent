@@ -1,11 +1,10 @@
-package substitution
-
-import p_term._
-import p_term.walker._
+package p_term
 
 /**
   * Created by EdSnow on 12/30/2016.
   */
+
+import p_term.walker.P_Term_walker
 
 object variables {
 

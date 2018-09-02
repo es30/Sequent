@@ -5,13 +5,13 @@
 
 import p_term._
 import p_term.P_Term.{lookupFunction, lookupVarName}
+import p_term.variables.P_Term_variables
 import p_formula._
 import p_formula.P_Formula.{lookupPredicate, lookupProposition}
+import p_formula.substitute.P_FormulaExtension
 
 import parseStuff._
-import substitution.hasFreeOccurrence._
-import substitution.variables.P_Term_variables
-import substitution.substitute._
+import hasFreeOccurrence.hasFreeOccurrence._
 import foundationalInferenceRule._
 
 
@@ -791,7 +791,7 @@ object test {
     println("#### Block 8 test: Eq and PA axioms")
     println
 
-    import axiomatization_Eq.theorems._
+    import theorems_Eq.theorems._
 
     println("####      Equality is symmetric.")
     println

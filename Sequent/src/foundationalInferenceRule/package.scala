@@ -14,13 +14,13 @@ package object foundationalInferenceRule {
   import p_term._
   import p_formula._
   import p_axiomatization._
+  import p_formula.substitute.P_FormulaExtension
 
   import p_sequent._
   import p_sequent.Cedent
   import p_sequent.Cedent.CedentTemplate
   import sequent._
-  import substitution.checkOccurs._
-  import substitution.substitute._
+  import hasFreeOccurrence.checkOccurs._
 
   import inferenceRuleWrapper._
 
