@@ -1,0 +1,939 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="57ec1b3e-8dad-4237-ac47-a966a18e035f" name="Default" comment="Refactor to move substitution." />
+    <ignored path="Sequent.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path="$PROJECT_DIR$/out/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="2103913557">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="17" />
+          <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.12" value="1" />
+          <entry key="project.open.time.3" value="1" />
+          <entry key="project.open.time.37" value="1" />
+          <entry key="project.open.time.43" value="1" />
+          <entry key="project.open.time.45" value="1" />
+          <entry key="project.open.time.46" value="1" />
+          <entry key="project.open.time.50" value="2" />
+          <entry key="project.open.time.58" value="1" />
+          <entry key="project.open.time.6" value="1" />
+          <entry key="project.open.time.64" value="1" />
+          <entry key="project.open.time.65" value="1" />
+          <entry key="project.open.time.71" value="1" />
+          <entry key="project.open.time.8" value="1" />
+          <entry key="project.open.time.85" value="1" />
+          <entry key="project.open.time.9" value="1" />
+          <entry key="project.opened" value="17" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="scala" value="115" />
+          <entry key="txt" value="30" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="PLAIN_TEXT" value="30" />
+          <entry key="Scala" value="115" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="scala" value="4" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Scala" value="4" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="Sequent" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Scala Worksheet" />
+        <option value="Scala Script" />
+        <option value="Package Object" />
+        <option value="Class" />
+        <option value="Scala Object" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>f001</find>
+      <find>f201</find>
+      <find>f202</find>
+      <find>ReplaceTerm</find>
+      <find>[--</find>
+      <find>a + a</find>
+      <find>Bye bye</find>
+      <find>-x-x</find>
+      <find>PA,</find>
+      <find>Eq,</find>
+      <find>SortedSet</find>
+      <find>_cont</find>
+      <find>occursX</find>
+      <find>wrap</find>
+      <find>v_y</find>
+      <find>substFound</find>
+      <find>_x</find>
+      <find>x = y</find>
+      <find>varsPrefix</find>
+      <find>walk</find>
+      <find>var_x</find>
+      <find>newFirstGap</find>
+      <find>globba</find>
+      <find>.d</find>
+      <find>indexOf</find>
+      <find>Int</find>
+      <find>BigInt</find>
+      <find>Rool1a</find>
+      <find>ArgTuple</find>
+      <find>hasFreeOccurrence</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>substitution</replace>
+      <replace>vars</replace>
+      <replace>val</replace>
+      <replace>private val</replace>
+      <replace>s</replace>
+      <replace>s101</replace>
+      <replace>s102</replace>
+      <replace>s103</replace>
+      <replace>s104</replace>
+      <replace>s105</replace>
+      <replace>s106</replace>
+      <replace>s107</replace>
+      <replace>s108</replace>
+      <replace>s109</replace>
+      <replace>s110</replace>
+      <replace>s111</replace>
+      <replace>s112</replace>
+      <replace>s113</replace>
+      <replace>s114</replace>
+      <replace>s115</replace>
+      <replace>s116</replace>
+      <replace>Set</replace>
+      <replace>SynVarIndex</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Ed Snow" />
+      </list>
+    </option>
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/inferenceRuleWrapper/package.scala" />
+        <option value="$PROJECT_DIR$/src/p_formula/package.scala" />
+        <option value="$PROJECT_DIR$/src/derivedInferenceRule/package.scala" />
+        <option value="$PROJECT_DIR$/src/p_axiomatization/axiomatization_Eq.scala" />
+        <option value="$PROJECT_DIR$/src/test.scala" />
+        <option value="$PROJECT_DIR$/Inference/src/test.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/error/package.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/parseStuff/formulaBuilder/package.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/error/error.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/p_axiomatization/axiomatization_Eq.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/p_axiomatization/axiomatization_PA.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/p_formula/package.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/parseStuff/package.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/parseStuff/MyParseStuffListener.java" />
+        <option value="$PROJECT_DIR$/Formula/src/parseStuff/ParseStuff.g4" />
+        <option value="$PROJECT_DIR$/Sequent/src/test.scala" />
+        <option value="$PROJECT_DIR$/Sequent/src/vetter/package.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/axiomatization/axiomatization_PA.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/p_axiomatization/P_Axiomatization.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/axiomatization/axiomatization_Eq.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/assistants/assistants.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/p_axiomatization/checkSubstitution.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/assistants/package.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/parseStuff/MyParseStuffListener.java" />
+        <option value="$PROJECT_DIR$/Formula/src/p_term/p_term.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/p_axiomatization/deconstruct.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/p_term/walker.scala" />
+        <option value="$PROJECT_DIR$/Sequent/src/diff/diff.scala" />
+        <option value="$PROJECT_DIR$/Sequent/src/substitution/substitute.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/axiomatization_PA/axiomatization_PA.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/test.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/tactics/package.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/tactics/walker.scala" />
+        <option value="$PROJECT_DIR$/Stratum1/Stratum1.iml" />
+        <option value="$PROJECT_DIR$/Stratum1/src/tactics/DTree.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/parseStuff/formulaBuilder/package.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/parseStuff/ParseStuff.g4" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/parseStuff/package.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/axiomatization_ZF/axiomatization_ZF.scala" />
+        <option value="$PROJECT_DIR$/Sequent/src/derivedInferenceRule/package.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/parseStuff/ParseStuffListener.java" />
+        <option value="$PROJECT_DIR$/Sequent/src/inferenceRuleWrapper/package.scala" />
+        <option value="$PROJECT_DIR$/FrontEnd/src/axiomatization_Eq/axiomatization_Eq.scala" />
+        <option value="$PROJECT_DIR$/Stratum1/src/theorems_Eq/theorems.scala" />
+        <option value="$PROJECT_DIR$/Stratum1/src/tactics/package.scala" />
+        <option value="$PROJECT_DIR$/Sequent/src/p_sequent/p_sequent.scala" />
+        <option value="$PROJECT_DIR$/Sequent/src/foundationalInferenceRule/package.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/substitution/hasFreeOccurrence.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/p_formula/walker.scala" />
+        <option value="$PROJECT_DIR$/Formula/src/p_formula/p_formula.scala" />
+        <option value="$PROJECT_DIR$/Stratum1/src/test.scala" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="10" />
+    <option name="y" value="25" />
+    <option name="width" value="1381" />
+    <option name="height" value="1000" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Formula" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Formula" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Formula" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="error" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Formula" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="formula" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Formula" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="p_axiomatization" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="FrontEnd" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="FrontEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Sequent" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Sequent" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Stratum1" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Stratum1" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Sequent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="$PROJECT_DIR$/Formula/src/parseStuff/ParseStuff.g4::/auto-gen" value="false" />
+    <property name="$PROJECT_DIR$/Formula/src/parseStuff/ParseStuff.g4::/gen-listener" value="true" />
+    <property name="$PROJECT_DIR$/Formula/src/parseStuff/ParseStuff.g4::/gen-visitor" value="false" />
+    <property name="$PROJECT_DIR$/FrontEnd/src/parseStuff/ParseStuff.g4::/auto-gen" value="false" />
+    <property name="$PROJECT_DIR$/FrontEnd/src/parseStuff/ParseStuff.g4::/gen-listener" value="true" />
+    <property name="$PROJECT_DIR$/FrontEnd/src/parseStuff/ParseStuff.g4::/gen-visitor" value="false" />
+    <property name="$PROJECT_DIR$/src/parseStuff/ParseStuff.g4::/auto-gen" value="false" />
+    <property name="$PROJECT_DIR$/src/parseStuff/ParseStuff.g4::/gen-listener" value="true" />
+    <property name="$PROJECT_DIR$/src/parseStuff/ParseStuff.g4::/gen-visitor" value="false" />
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/EdSnow/IdeaProjects/Sequent/Sequent/src/derivedInferenceRule/package.scala&#10;List&#9;FILE&#9;file://C:/Users/EdSnow/IdeaProjects/Sequent/src/parseStuff/MyParseStuffListener.java&#10;note&#9;null&#9;null" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1534815285061" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.153125" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\EdSnow\IdeaProjects\Sequent\Sequent\src" />
+      <recent name="C:\Users\EdSnow\IdeaProjects\Sequent\Sequent" />
+      <recent name="C:\Users\EdSnow\IdeaProjects\SequentX\Sequint" />
+      <recent name="C:\Users\EdSnow\IdeaProjects\Sequent\src\parseStuff" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="parseStuff" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\EdSnow\IdeaProjects\Sequent\FrontEnd\src\parseStuff" />
+      <recent name="C:\Users\EdSnow\IdeaProjects\Sequent\FrontEnd\src\axiomatization_ZF" />
+      <recent name="C:\Users\EdSnow\IdeaProjects\Sequent\FrontEnd\src\tactics" />
+      <recent name="C:\Users\EdSnow\IdeaProjects\Sequent\FrontEnd\src\assistants" />
+      <recent name="C:\Users\EdSnow\IdeaProjects\SequentX\Formula\src\parseStuff" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.Test">
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="" />
+      <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="DEBUGGER_TYPE" value="Java" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <Java />
+      <Profilers>
+        <option name="GAPID_DISABLE_PCS" value="false" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
+      <module name="" />
+      <option name="TESTING_TYPE" value="0" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="EXTRA_OPTIONS" value="" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="DEBUGGER_TYPE" value="Java" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <Java />
+      <Profilers>
+        <option name="ENABLE_ADVANCED_PROFILING" value="true" />
+        <option name="GAPID_ENABLED" value="false" />
+        <option name="GAPID_DISABLE_PCS" value="false" />
+        <option name="SUPPORT_LIB_ENABLED" value="true" />
+        <option name="INSTRUMENTATION_ENABLED" value="true" />
+      </Profilers>
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="test" />
+      <module name="Stratum1" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Test" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType" factoryName="Kotlin">
+      <module name="Sequent" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Scala Console" type="ScalaScriptConsoleRunConfiguration" factoryName="Scala Console" temporary="true">
+      <module name="Sequent" />
+      <setting name="vmparams4" value="-Djline.terminal=NONE" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="consoleArgs" value="-usejavacp" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Test" />
+      <item itemvalue="Scala Console.Scala Console" />
+    </list>
+  </component>
+  <component name="SbtLocalSettings">
+    <option name="modificationStamps">
+      <map>
+        <entry key="S:/" value="1451953726000" />
+      </map>
+    </option>
+  </component>
+  <component name="ScalaProjectSettings">
+    <option name="intInjectionMapping">
+      <map>
+        <entry key="xml" value="XML" />
+      </map>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="57ec1b3e-8dad-4237-ac47-a966a18e035f" name="Default" comment="" />
+      <created>1471374521524</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1471374521524</updated>
+    </task>
+    <task id="LOCAL-00001" summary="This is the first real working version of Sequent. Not very pretty, but functional.">
+      <created>1484677852172</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1484677852172</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Reorganized as three modules.">
+      <created>1485383127406</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1485383127406</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Reorganized as three modules.">
+      <created>1485386269421</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1485386269421</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Base commit.">
+      <created>1487698137666</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1487698137666</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Repartition into four modules.">
+      <created>1526764304754</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1526764304754</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Refactor to move substitution.">
+      <created>1535865102040</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1535865102040</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
+    <servers />
+  </component>
+  <component name="TodoView" selected-index="4">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="10" y="25" width="1381" height="1000" extended-state="0" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.35555556" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Image Layers" order="2" />
+      <window_info id="UI Designer" order="3" />
+      <window_info id="Capture Tool" order="4" />
+      <window_info id="Favorites" order="5" side_tool="true" />
+      <window_info id="Nl-Palette" order="6" />
+      <window_info id="Palette&#9;" order="7" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32947975" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32814372" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32947975" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Tool Output" order="8" weight="0.32947975" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5025679" side_tool="true" weight="0.32947975" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.32934132" />
+      <window_info anchor="bottom" id="ANTLR Preview" order="11" />
+      <window_info anchor="bottom" id="Messages" order="12" sideWeight="0.49743214" weight="0.32814372" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Designer" order="3" />
+      <window_info anchor="right" id="Palette" order="4" />
+      <window_info anchor="right" id="Capture Analysis" order="5" />
+      <window_info anchor="right" id="Maven Projects" order="6" />
+      <window_info anchor="right" id="Properties" order="7" />
+      <window_info anchor="right" id="Theme Preview" order="8" />
+    </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25018343" />
+      <window_info id="Structure" order="1" weight="0.25" />
+      <window_info id="Nl-Palette" order="2" />
+      <window_info id="Capture Tool" order="3" />
+      <window_info id="UI Designer" order="4" />
+      <window_info id="Palette&#9;" order="5" />
+      <window_info id="Image Layers" order="6" />
+      <window_info id="Favorites" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32947975" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32947975" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Tool Output" order="7" weight="0.32947975" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5025679" side_tool="true" weight="0.32947975" />
+      <window_info anchor="bottom" id="ANTLR Preview" order="9" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.32947975" />
+      <window_info anchor="bottom" id="Terminal" order="11" />
+      <window_info anchor="bottom" id="Messages" order="12" sideWeight="0.49743214" visible="true" weight="0.32947975" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Maven Projects" order="4" />
+      <window_info anchor="right" id="Designer" order="5" />
+      <window_info anchor="right" id="Capture Analysis" order="6" />
+      <window_info anchor="right" id="Properties" order="7" />
+      <window_info anchor="right" id="Theme Preview" order="8" />
+    </layout-to-restore>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <MESSAGE value="This is the first real working version of Sequent. Not very pretty, but functional." />
+    <MESSAGE value="Reorganized as three modules." />
+    <MESSAGE value="Base commit." />
+    <MESSAGE value="Repartition into four modules." />
+    <MESSAGE value="Refactor to move substitution." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor to move substitution." />
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/gen/parseStuff/ParseStuffParser.java" />
+    <entry file="file://$PROJECT_DIR$/Seq.iml" />
+    <entry file="file://$PROJECT_DIR$/Formula/src/error/package.scala" />
+    <entry file="file://$PROJECT_DIR$/Formula/src/p_term/package.scala" />
+    <entry file="file://$PROJECT_DIR$/Formula/src/p_formula/package.scala" />
+    <entry file="file://$PROJECT_DIR$/Resolution/Resolution.iml" />
+    <entry file="file://$PROJECT_DIR$/Formula/src/error/error.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Sequent Snapshot 246/FrontEnd/FrontEnd.iml" />
+    <entry file="file://$PROJECT_DIR$/Formula/src/p_term/P_Applicand$.java" />
+    <entry file="file://$PROJECT_DIR$/FrontEnd/src/axiomatization/axiomatization_Eq.scala" />
+    <entry file="file://$PROJECT_DIR$/FrontEnd/src/assistants/assistants.scala" />
+    <entry file="file://$PROJECT_DIR$/Formula/src/p_axiomatization/prefixWalker.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4">
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Formula/src/term/Term.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FrontEnd/src/parseStuff/ErrorCollector.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Stratum1/src/tactics/walker.scala" />
+    <entry file="file://$PROJECT_DIR$/Sequent/Sequent.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="9" column="12" lean-forward="true" selection-start-line="7" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Stratum1/Stratum1.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FrontEnd/src/parseStuff/ParseStuff.g4">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FrontEnd/src/axiomatization_ZF/axiomatization_ZF.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FrontEnd/src/parseStuff/ParseStuffListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FrontEnd/src/parseStuff/ParseStuffParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Sequent/src/inferenceRuleWrapper/package.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Stratum1/src/derivedInferenceRule/package.scala">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Stratum1/src/diff/diff.scala">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Stratum1/src/tactics/DTree.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Formula/src/p_axiomatization/P_Axiomatization.scala">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Formula/src/formula/Formula.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FrontEnd/src/parseStuff/package.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FrontEnd/src/axiomatization_PA/axiomatization_PA.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Stratum1/src/theorems_Eq/theorems.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Stratum1/src/tactics/package.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Sequent/src/sequent/Sequent.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Formula/src/substitution/hasFreeOccurrence.scala" />
+    <entry file="file://$PROJECT_DIR$/Formula/src/substitution/substitute.scala" />
+    <entry file="file://$PROJECT_DIR$/Sequent/src/foundationalInferenceRule/Error_cedent.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1619" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FrontEnd/src/axiomatization_Eq/axiomatization_Eq.scala">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Formula/src/substitution/variables.scala" />
+    <entry file="file://$PROJECT_DIR$/Stratum1/src/test.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="47">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="e#47#62#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Formula/src/p_formula/p_formula.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Sequent/src/foundationalInferenceRule/package.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="22" column="9" selection-start-line="22" selection-start-column="9" selection-end-line="22" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Formula/src/p_term/walker.scala">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Formula/src/p_term/p_term.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Formula/src/p_formula/walker.scala">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Sequent/src/p_sequent/p_sequent.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="55" column="31" selection-start-line="55" selection-start-column="31" selection-end-line="55" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Formula/src/p_axiomatization/deconstruct.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#26#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>antlr-4.7.1-complete</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>10</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>Formula</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>scala-sdk-2.12.1</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
